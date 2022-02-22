@@ -3,12 +3,13 @@ import "firebase/auth";
 import "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDeiL1T0jGV_wD7eGHckry3DCPcVsKfJzI",
-    authDomain: "ht6-2021.firebaseapp.com",
-    projectId: "ht6-2021",
-    storageBucket: "ht6-2021.appspot.com",
-    messagingSenderId: "406993166422",
-    appId: "1:406993166422:web:4122ccc155e9a1e5d51bf7",
+  apiKey: "AIzaSyAZ9PTtI0X_vP17nMaIa-K2kJm8uaEQ-KM",
+  authDomain: "foodaddtech.firebaseapp.com",
+  projectId: "foodaddtech",
+  storageBucket: "foodaddtech.appspot.com",
+  messagingSenderId: "984989408354",
+  appId: "1:984989408354:web:35f48782daf52299dac53b",
+  measurementId: "G-YCLPFQNRH5"
 };
 firebase.initializeApp(firebaseConfig);
 

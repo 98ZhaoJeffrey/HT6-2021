@@ -32,7 +32,7 @@ const Nav = () => {
                 var user = result.user;
                 console.log(user);
                 localStorage.setItem("user", JSON.stringify(user));
-                // // Redirect to dashboard
+                // Redirect to dashboard
                 window.location.href = "/dashboard";
             })
             .catch((error) => {
@@ -72,10 +72,14 @@ const Nav = () => {
                         >
                             <VisuallyHidden>Choc</VisuallyHidden>
                         </chakra.a>
-                        <Image width="30px" height="30px" src={logo}></Image>
-                        <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
-                            FoodAddict
-                        </chakra.h1>
+                        <Link to="/">
+                            <Box display="flex" flex="row">
+                                <Image width="30px" height="30px" src={logo}></Image>
+                                <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
+                                    FoodAddict
+                                </chakra.h1>
+                            </Box>
+                        </Link>
                     </Flex>
                     <HStack display="flex" alignItems="center" spacing={1}>
                         <HStack
@@ -84,9 +88,6 @@ const Nav = () => {
                             color="brand.500"
                             display={{ base: "none", md: "inline-flex" }}
                         >
-                            <Link to="/">
-                                <Button variant="ghost">Features</Button>
-                            </Link>
                             <Link to="/search">
                                 <Button variant="ghost">Search</Button>
                             </Link>
@@ -140,19 +141,7 @@ const Nav = () => {
                                     onClick={mobileNav.onClose}
                                 />
 
-                                <Button w="full" variant="ghost">
-                                    Features
-                                </Button>
-                                <Button w="full" variant="ghost">
-                                    Pricing
-                                </Button>
-                                <Button w="full" variant="ghost">
-                                    Blog
-                                </Button>
-                                <Button w="full" variant="ghost">
-                                    Company
-                                </Button>
-                                <Button w="full" variant="ghost">
+                                <Button w="full" variant="ghost" onClick={() => {signIn()}}>
                                     Sign in
                                 </Button>
                             </VStack>
