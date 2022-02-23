@@ -13,7 +13,8 @@ const Features = () => {
     return (
         <Flex
             bg={useColorModeValue("#F9FAFB", "gray.600")}
-            p={20}
+            pb={20}
+            px={20}
             w="auto"
             justifyContent="center"
             alignItems="center"

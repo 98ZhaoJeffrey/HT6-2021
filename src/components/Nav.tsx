@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     chakra,
     Avatar,
@@ -18,37 +18,25 @@ import { Link } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
 import logo from "../assets/logo.png";
 import firebase from "../firebase";
+import { AuthContext } from "../contexts/AuthContext";
 
 const Nav = () => {
+    const user = useContext(AuthContext);
     const bg = useColorModeValue("white", "gray.800");
     const mobileNav = useDisclosure();
-    function signIn() {
+    const signIn = async () => {
         const provider = new firebase.auth.GoogleAuthProvider();
-        firebase
-            .auth()
-            .signInWithPopup(provider)
-            .then((result) => {
-                // The signed-in user info.
-                var user = result.user;
-                console.log(user);
-                localStorage.setItem("user", JSON.stringify(user));
-                // Redirect to dashboard
-                window.location.href = "/dashboard";
-            })
-            .catch((error) => {
-                // Handle Errors here.
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                // The email of the user's account used.
-                var email = error.email;
-                // The firebase.auth.AuthCredential type that was used.
-                var credential = error.credential;
-                // ...
-                console.log(error.code);
-                console.log(error.message);
-                console.log(error.credential);
-            });
+        try{
+            const result = await firebase.auth().signInWithPopup(provider)
+            // Redirect to dashboard
+            window.location.href = "/dashboard";
+        }catch(error: any){
+            console.log(error.code);
+            console.log(error.message);
+            console.log(error.credential);
+        };
     }
+
     return (
         <React.Fragment>
             <chakra.header
@@ -92,19 +80,17 @@ const Nav = () => {
                                 <Button variant="ghost">Search</Button>
                             </Link>
 
-                            {JSON.parse(localStorage.getItem("user") || "{}") === 0 ? (
+                            {user ? (
                                 <Link to="/dashboard">
                                     <Avatar
-                                        name=""
-                                        src={JSON.parse(localStorage.getItem("user") || "{}").photoURL}
+                                        name="name"
+                                        src={user.photoURL!}
                                     />
                                 </Link>
                             ) : (
                                 <Button
                                     variant="ghost"
-                                    onClick={() => {
-                                        signIn();
-                                    }}
+                                    onClick={() => signIn()}
                                 >
                                     Sign in
                                 </Button>

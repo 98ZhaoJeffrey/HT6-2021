@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect} from "react";
+import React, { useState, useEffect, useContext} from "react";
 import {
     Box,
     Grid,
@@ -21,18 +21,13 @@ import {
     Text
 } from "@chakra-ui/react";
 import firebase from "../firebase";
-
+//import AuthContext from "../contexts/AuthContext";
 import Unit from "../ts/types";
 import {Ingredients} from "../ts/interfaces";
-import { update } from "lodash";
-import { stringify } from "querystring";
-
-// get current logged in user
-//change to react context later
-const user:any = JSON.parse(localStorage.getItem("user") || '{}');
-
+import {AuthContext} from "../contexts/AuthContext";
 
 const Dashboard = () => {
+    const user = useContext(AuthContext)
     const [ingredients, setIngredients] = useState<Ingredients[]>([]);
     const [newIngredient, setNewIngredient] = useState<string>("");
     const [newUnit, setNewUnit] = useState<Unit>({} as Unit);
@@ -43,7 +38,7 @@ const Dashboard = () => {
     const [ingredientLists, setIngredientLists] = useState<Record<string, Ingredients[]>>({});
 
     const toast = useToast();
-    const ref = firebase.firestore().collection("users").doc(user.uid);
+    const ref = firebase.firestore().collection("users").doc(user!.uid);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const name = e.target.name;
         const amount = e.target.value === "" ? 0 : parseInt(e.target.value);
@@ -163,6 +158,7 @@ const Dashboard = () => {
 
     // get data from firebase and store into state
     useEffect(() => {
+        console.log(user)
         ref.get().then(function (doc: firebase.firestore.DocumentData) {
             if (doc.exists) {
                 console.log(doc.data().lists);       
@@ -172,7 +168,7 @@ const Dashboard = () => {
                 firebase
                     .firestore()
                     .collection("users")
-                    .doc(user.uid)
+                    .doc(user!.uid)
                     .set({ lists: {"My first list" : []}});
                 console.log("Initialize user")
             }                
@@ -200,16 +196,16 @@ const Dashboard = () => {
                     <Avatar
                         name=""
                         size="xl"
-                        src={JSON.parse(localStorage.getItem("user") || "{}").photoURL}
+                        src={user!.photoURL!}
                     />
                     <Heading mt="5px" mb="20px">
-                        {user.displayName}
+                        {user!.displayName}
                     </Heading>
                     <Button
                         mt="20px"
                         onClick={() => {
-                            localStorage.clear();
-                            window.location.href = "/";
+                            firebase.auth().signOut();
+
                         }}
                         colorScheme="red"
                     >

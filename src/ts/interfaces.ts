@@ -1,5 +1,5 @@
 import Unit from "./types";
-
+import firebase from "firebase";
 export interface Ingredients{
     name: string,
     amount: number,
@@ -17,5 +17,11 @@ export interface Recipe{
     steps: Steps[],
     ingredients: Ingredients[]
 }
+
+
+export interface PrivateRouteProps{
+    authenticationPath: string,
+    outlet: JSX.Element,
+  };
 
 //export default { Ingredients, Steps, Recipe }

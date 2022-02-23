@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
     chakra,
     Box,
@@ -9,15 +9,13 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import firebase from "../firebase";
-
-// get current logged in user
-//change this to useContext later
-var user = JSON.parse(localStorage.getItem("user") || "{}");
+import {AuthContext} from "../contexts/AuthContext";
 
 interface Ingredients{
     name: string,
     amount: number,
 }
+//should change this to use types as well but we will see when we use the api
 
 interface Props{
     link: string,
@@ -47,6 +45,7 @@ const calculateMatch = (recipeIngredients:Ingredients[], ingredients: Ingredient
 }
 
 const FoodResult = (props:Props) => {
+    const user = useContext(AuthContext);
     const [ingredients, setIngredients] = useState<Ingredients[]>([]);
     const [recipeIngredients, setRecipeIngredients] = useState<Ingredients[]>([]);
     const ref = firebase.firestore();

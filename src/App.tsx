@@ -1,42 +1,41 @@
-import React from "react";
+import React, {useContext, useEffect} from "react";
 import {
     BrowserRouter as Router,
-    Switch,
+    Routes,
     Route,
-    Redirect,
 } from "react-router-dom";
 import Nav from "./components/Nav";
 import Dashboard from "./pages/Dashboard";
-import Hero from "./components/Hero";
-import Features from "./components/Features";
 import RecipePage from "./pages/Recipe";
 import Search from "./pages/Search";
+import Home from "./pages/Home";
+import PrivateRoute from "./components/PrivateRoute";
+import { PrivateRouteProps } from "./ts/interfaces";
+import {AuthProvider} from "./contexts/AuthContext";
+
 
 const App = () => {
+
+    const defaultPrivateRouteProps: Omit<PrivateRouteProps, 'outlet'> = {
+        authenticationPath: '/',
+      };
+
     return (
         <div>
-            <Router>
-                <Nav />
-                <Switch>
-                    <Route exact path="/">
-                        <Hero />
-                        <Features />
-                    </Route>
-                    <Route path="/dashboard">
-                        {localStorage.getItem("user") ? (
-                            <Dashboard />
-                        ) : (
-                            <Redirect to="/" />
-                        )}
-                    </Route>
-                    <Route path="/recipe/:id">
-                        <RecipePage />
-                    </Route>
-                    <Route path="/search">
-                        <Search />
-                    </Route>
-                </Switch>
-            </Router>
+            <AuthProvider>
+                <Router>
+                    <Nav />
+                    <Routes>
+                        <Route path="/" element={<Home/>}/>
+                        <Route 
+                            path='dashboard' 
+                            element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Dashboard />} />} 
+                        />
+                        <Route path="/recipe/:id" element={<RecipePage />}/>
+                        <Route path="/search" element={<Search />}/>
+                    </Routes>
+                </Router> 
+            </AuthProvider>
         </div>
     );
 };
