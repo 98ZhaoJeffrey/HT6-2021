@@ -1,42 +1,56 @@
-import React, { useState, useEffect} from "react";
-import { Flex } from "@chakra-ui/react";
+import React, { useState, useEffect, useMemo} from "react";
+import { 
+    Button,
+    Flex,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    Select,
+} from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 import Pagination from "../components/Pagination";
 import FoodResult from "../components/FoodResult";
+import { useIngredientsListContext } from "../contexts/IngredientsListContext";
+import {Recipe} from "../ts/interfaces";
+import ExampleRecipe from "./ExampleRecipe.json"
 
-// hard coded cause we ran out of time
-const tomatoAndEggs = {
-    title: "Tomato and Eggs",
-    image: "https://christieathome.com/wp-content/uploads/2020/10/Chinese-Tomato-Egg-Stirfry-18-1-scaled.jpg",
-    link: "/recipe/5JglkB1rEZcuVbtxTbk5",
-    description:
-        "Chinese Tomato Egg Stir-Fry. A popular Chinese dish that is deliciously sweet, tangy, and savoury. It's a great side dish for supper or lunch and is very easy to make at home!.",
-    id: "5JglkB1rEZcuVbtxTbk5",
-};
-
-const tomatoOmelet = {
-    title: "Tomato Omelette",
-    image: "https://hurrythefoodup.com/wp-content/uploads/2017/03/Tomato-Omelette-7.jpg",
-    link: "/recipe/PvEaBZvu4GC7ZjAcIs3I",
-    description:
-        "Preparing an omelette shows the chef many things, including your plating abilities (how you present a dish) and how well you can cook a delicate ingredient (the egg). We’ve opted for this tomato omelette version for a little more kick.",
-    id: "PvEaBZvu4GC7ZjAcIs3I",
-};
-
-const spaghettiMarinara = {
-    title: "Spaghetti Marinara with Eggs",
-    image: "https://pinchofyum.com/wp-content/uploads/2014/05/spaghetti-6.jpg",
-    link: "/recipe/cxdmqR5bEOlDx0tuj11a",
-    description:
-        "Poached eggs on spaghetti with homemade tomato sauce issss basically the best thing ever. And I’ve been eating it all week. Just try to stop that dinner train, I dare you. Either move outta the way or jump on this one because here it comes.",
-    id: "cxdmqR5bEOlDx0tuj11a",
-};
 
 const Search = () => {
+    const [ingredients, setIngredients] = useIngredientsListContext()[0];
+
+    //we will fetch this from spoonacular for now, then use our own database eventually
+    const [recipes, setRecipes] = useState<Recipe[]>([]);
+    
+    // when user first access page, send request
+    // only make new request when user changes ingredients list
+
+    useEffect(()=>{
+        const getData = async () => {
+            try{
+                // should be a fetch request but we will change this
+                const data = ExampleRecipe
+                console.log(data)
+            //setRecipes([...data])
+            }catch{
+                console.log("error")
+            }
+        }
+        getData();
+    }, []);
+
     return (
-        <Flex direction="column">
-            <FoodResult {...tomatoOmelet}></FoodResult>
-            <FoodResult {...tomatoAndEggs}></FoodResult>
-            <FoodResult {...spaghettiMarinara}></FoodResult>
+        <Flex direction="column" alignItems={'center'} >
+            <InputGroup size="lg" width="80%" my="2rem">
+                <InputLeftElement
+                    pointerEvents='none'
+                    children={<SearchIcon color='green.500' />}
+                />
+                <Input
+                    placeholder="Search"
+                >
+                </Input>                
+            </InputGroup>
+            <Select placeholder="Sort By" width="80%"></Select>
             <Pagination />
         </Flex>
     );

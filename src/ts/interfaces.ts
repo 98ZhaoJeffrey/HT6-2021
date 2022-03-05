@@ -1,4 +1,4 @@
-import Unit from "./types";
+import { Unit } from "./types";
 import firebase from "firebase";
 export interface Ingredients{
     name: string,
@@ -11,6 +11,7 @@ export interface Steps{
 }
 
 export interface Recipe{
+    id: string,
     name: string,
     description: string,
     image: string,
@@ -23,5 +24,3 @@ export interface PrivateRouteProps{
     authenticationPath: string,
     outlet: JSX.Element,
   };
-
-//export default { Ingredients, Steps, Recipe }

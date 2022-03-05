@@ -126,7 +126,6 @@ const Nav = () => {
                                     aria-label="Close menu"
                                     onClick={mobileNav.onClose}
                                 />
-
                                 <Button w="full" variant="ghost" onClick={() => {signIn()}}>
                                     Sign in
                                 </Button>

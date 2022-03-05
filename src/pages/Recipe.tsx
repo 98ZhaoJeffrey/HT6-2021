@@ -72,7 +72,7 @@ const RecipePage = () => {
                                 Servings
                             </Text>
                             <NumberInput
-                                min={0}
+                                min={1}
                                 w="20%"
                                 value={servings}
                                 onChange={(value) => setServings(parseInt(value))}

@@ -18,47 +18,93 @@ import {
     TabPanels, 
     Tab, 
     TabPanel,
-    Text
+    Text,
+    Table,
+    TableCaption,
+    Tbody,
+    Td,
+    Tfoot,
+    Th,
+    Thead,
+    Tr,
+    ButtonGroup,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Flex
 } from "@chakra-ui/react";
 import firebase from "../firebase";
-//import AuthContext from "../contexts/AuthContext";
-import Unit from "../ts/types";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Unit } from "../ts/types";
 import {Ingredients} from "../ts/interfaces";
 import {AuthContext} from "../contexts/AuthContext";
+import { useIngredientsListContext} from "../contexts/IngredientsListContext";
+import { DeleteIcon } from "@chakra-ui/icons";
+
+const units: Unit[] = ["ea", "ml", "L", "oz", "pt", "qt", "gals", "lbs", "mg", "gram", "kg", "tsp", "tbsp", "c"]
 
 const Dashboard = () => {
-    const user = useContext(AuthContext)
-    const [ingredients, setIngredients] = useState<Ingredients[]>([]);
+    const user = useContext(AuthContext);
+    
+    //keep track of the ingredients and the list's name
+    //const [currentIngredients, setCurrentIngredients] = useIngredientsListContext()[0];
+    //const [currentListName, setCurrentListName] = useIngredientsListContext()[1];
+
+    // setting and modifying ingredients
+    const [ingredients, setIngredients] = useIngredientsListContext()[0];
+    //useState<Ingredients[]>([]);
     const [newIngredient, setNewIngredient] = useState<string>("");
     const [newUnit, setNewUnit] = useState<Unit>({} as Unit);
-    const [currentTab, setCurrentTab] = useState<number>(0);
+    
+    // setting and creating lists
     const [newList, setNewList] = useState<string>("");
     const [selectedList, setSelectedList] = useState<string>("");
-    const [currentList, setCurrentList] = useState<string>("");
+
+    const [currentList, setCurrentList] = useIngredientsListContext()[1];
+    //useState<string>("");
     const [ingredientLists, setIngredientLists] = useState<Record<string, Ingredients[]>>({});
+
+    //for switching tabs
+    const [currentTab, setCurrentTab] = useState<number>(0);
 
     const toast = useToast();
     const ref = firebase.firestore().collection("users").doc(user!.uid);
+
+    const updateList = (updatedIngredients: Ingredients[]) => {
+        ingredientLists[currentList] = updatedIngredients;
+        console.table(ingredientLists)
+        ref.update({lists: ingredientLists});
+        setIngredients(updatedIngredients);
+        //setCurrentIngredients(updatedIngredients);
+        setIngredientLists(ingredientLists);
+    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const name = e.target.name;
         const amount = e.target.value === "" ? 0 : parseInt(e.target.value);
 
         // find the ingredient that changed
-        //console.log(ingredients)
         const updatedIngredients: Ingredients[] = ingredients.map((ingredient) =>
             ingredient.name === name
-                ? { ...ingredient, amount: amount }
+                ? { ...ingredient, amount: amount}
                 : ingredient
         );
         // update changed ingredient to new amount
-        
-        ingredientLists[currentList] = updatedIngredients;
-        console.log(ingredientLists)
-        ref.update({lists: ingredientLists});
-        setIngredients(updatedIngredients);
-        setIngredientLists(ingredientLists);
-        
+        updateList(updatedIngredients);
     };
+
+    const updateUnit = (name: string, unit: Unit) => {
+        
+        const updatedIngredients: Ingredients[] = ingredients.map((ingredient) =>
+        ingredient.name === name
+            ? { ...ingredient, unit: unit}
+            : ingredient
+        );
+        // update changed ingredient to new amount    
+        updateList(updatedIngredients);
+    }
+
     // add new ingredient created by user to dashboard and firebase
     const addIngredient = () => {
         const ingredient: Ingredients = {
@@ -102,6 +148,14 @@ const Dashboard = () => {
             setNewUnit({} as Unit);
         }
     }
+
+    const deleteIngredient = (name: string) => {
+        const updatedIngredients: Ingredients[] = ingredients.filter(
+            (ingredient) => ingredient.name !== name
+        );
+        updateList(updatedIngredients);
+    }
+
     const addList = () => {
         if(newList === ""){
             toast({
@@ -123,12 +177,14 @@ const Dashboard = () => {
             ingredientLists[newList] = [];
             ref.update({lists: ingredientLists});
             setIngredientLists(ingredientLists)
+            setCurrentList(newList)
+            setIngredients(ingredientLists[newList]);
             setNewList("");
             setCurrentTab(0);
         }
     }
 
-    const selectList = () =>{
+    const selectList = () => {
         if(selectedList === ""){
             toast({
                 title: "Invalid list",
@@ -146,22 +202,27 @@ const Dashboard = () => {
                 duration: 5000,
                 isClosable: true,
             });
-        setCurrentTab(0);
-        setCurrentList(selectedList);
-        //console.log(typeof(ingredientLists))
-        console.log(selectedList)
-        console.log(ingredientLists[selectedList])
-        setIngredients(ingredientLists[selectedList])
+            setCurrentTab(0);
+            setCurrentList(selectedList);
+            console.log(selectedList)
+            console.log(ingredientLists[selectedList])
+            setIngredients(ingredientLists[selectedList])
         }
         setSelectedList("");
+    }
+
+    const deleteList = () => {
+        delete ingredientLists[currentList]
+        ref.update({lists: ingredientLists})
+        setCurrentList("")
+        setIngredients([]);
     }
 
     // get data from firebase and store into state
     useEffect(() => {
         console.log(user)
         ref.get().then(function (doc: firebase.firestore.DocumentData) {
-            if (doc.exists) {
-                console.log(doc.data().lists);       
+            if (doc.exists) {       
                 setIngredientLists(doc.data().lists);
             }
             else{
@@ -240,19 +301,9 @@ const Dashboard = () => {
                                     value={newUnit}
                                     onChange={(e) => setNewUnit(e.target.value as Unit)}
                                 >
-                                    <option value="ea">ea</option>
-                                    <option value="mL">mL</option>
-                                    <option value="L">L</option>
-                                    <option value="lbs">lbs</option>
-                                    <option value="oz">oz</option>
-                                    <option value="pt">pt</option>
-                                    <option value="gal">gal</option>
-                                    <option value="qt">qt</option>
-                                    <option value="tsp">tsp</option>
-                                    <option value="c">C</option>
-                                    <option value="mg">mg</option>
-                                    <option value="gram">gram</option>
-                                    <option value="tbsp">tbsp</option>
+                                    {units.map((unit) => {
+                                        return <option value={unit}>{unit}</option>
+                                    })}
                                 </Select>
                                 <Button colorScheme="green" onClick={() => addIngredient()}>
                                     Add
@@ -295,22 +346,64 @@ const Dashboard = () => {
                 </Tabs>
             </Grid>
             <Text fontSize="3rem" fontWeight="600" mt="2rem">List: {currentList}</Text>
-            <Grid templateColumns="repeat(4, 1fr)" gap={6} my="50px">
-                {ingredients.map((ingredient) => (
-                    <FormControl key={ingredient.name}>
-                        <FormLabel>{ingredient.name}</FormLabel>
-                        <InputGroup>
-                            <Input
-                                value={ingredient.amount}
-                                name={ingredient.name}
-                                type="number"
-                                onChange={handleChange}
-                            ></Input>
-                            <InputRightAddon children={ingredient.unit} />
-                        </InputGroup>
-                    </FormControl>
-                ))}
-            </Grid>
+            <Table>
+                <Thead>
+                    <Tr>
+                    <Th>Food Name</Th>
+                    <Th>Quantity</Th>
+                    <Th isNumeric>Action</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {ingredients.map((ingredient) =>{
+                        return(
+                            <Tr>
+                                <Td>
+                                    {ingredient.name}
+                                </Td>
+                                <Td>                        
+                                    <InputGroup>
+                                        <Input
+                                            value={ingredient.amount}
+                                            name={ingredient.name}
+                                            type="number"
+                                            onChange={handleChange}
+                                        >
+                                        </Input>
+                                        <InputRightAddon children={ingredient.unit} />
+                                    </InputGroup>
+                                </Td>
+                                <Td isNumeric>
+                                    <ButtonGroup>
+                                        <Menu>
+                                            <MenuButton as={Button} colorScheme={'green'} rightIcon={<ChevronDownIcon />}>
+                                                Switch Unit
+                                            </MenuButton>
+                                            <MenuList>
+                                                {units.map((unit)=>{
+                                                    return <MenuItem onClick={()=>{updateUnit(ingredient.name, unit)}}>{unit}</MenuItem>
+                                                })}
+                                            </MenuList>
+                                        </Menu>
+                                        <Button colorScheme={'red'} onClick={() => {deleteIngredient(ingredient.name)}} rightIcon={<DeleteIcon/>}>Delete</Button>
+                                    </ButtonGroup>
+                                </Td>
+                            </Tr>
+                        )
+                    })}
+                </Tbody>
+                <Tfoot >
+
+                    <Button 
+                        mt="2rem" 
+                        colorScheme={'red'} 
+                        variant={'outline'} 
+                        onClick={() => {deleteList()}} 
+                        rightIcon={<DeleteIcon/>}>
+                            Delete list
+                    </Button>
+                </Tfoot>
+                </Table>
         </Box>
     );
 };

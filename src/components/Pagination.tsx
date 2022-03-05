@@ -1,5 +1,5 @@
 import React from "react";
-import { chakra, Flex, useColorModeValue, Icon } from "@chakra-ui/react";
+import { chakra, Flex, useColorModeValue, Icon, HStack, Input, Text } from "@chakra-ui/react";
 
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
@@ -8,7 +8,6 @@ interface Props{
     active: boolean,
     children: React.ReactNode
 }
-
 
 const Pagination = () => {
     const PagButton = (Props:Props) => {
@@ -22,9 +21,9 @@ const Pagination = () => {
                 px={4}
                 py={2}
                 rounded="md"
-                bg={useColorModeValue("teal.100", "teal.700")}
-                color={useColorModeValue("gray.700", "gray.200")}
-                opacity={Props.disabled && 0.6}
+                bg={useColorModeValue("green.400", "green.700")}
+                color={useColorModeValue("white.400", "gray.200")}
+                opacity={0.6}
                 {...(Props.active && activeStyle)}
             >
                 {Props.children}
@@ -39,7 +38,7 @@ const Pagination = () => {
             alignItems="center"
             justifyContent="center"
         >
-            <Flex>
+            <HStack>
                 <PagButton disabled={0} active={false} >
                     <Icon
                         as={IoIosArrowBack}
@@ -54,12 +53,16 @@ const Pagination = () => {
                 <PagButton disabled={0} active={false} >5</PagButton>
                 <PagButton disabled={0} active={false}>
                     <Icon
-                        as={IoIosArrowForward}
-                        color={useColorModeValue("gray.700", "gray.200")}
-                        boxSize={4}
+                    as={IoIosArrowForward}
+                    color={useColorModeValue("gray.700", "gray.200")}
+                    boxSize={4}
                     />
                 </PagButton>
-            </Flex>
+                <HStack>
+                    <Text wordBreak={"unset"}>Go to:</Text>
+                    <Input w="50px" />
+                </HStack>
+            </HStack>
         </Flex>
     );
 };

@@ -6,15 +6,17 @@ import {
     Text,
     useColorModeValue,
     Heading,
+    Input
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import firebase from "../firebase";
 import {AuthContext} from "../contexts/AuthContext";
+import {Ingredients} from "../ts/interfaces";
 
-interface Ingredients{
-    name: string,
-    amount: number,
-}
+//interface Ingredients{
+//    name: string,
+//    amount: number,
+//}
 //should change this to use types as well but we will see when we use the api
 
 interface Props{
@@ -49,6 +51,7 @@ const FoodResult = (props:Props) => {
     const [ingredients, setIngredients] = useState<Ingredients[]>([]);
     const [recipeIngredients, setRecipeIngredients] = useState<Ingredients[]>([]);
     const ref = firebase.firestore();
+    //const ref = firebase.firestore().collection("users").doc(user!.uid);
     useEffect(() => {
         if (user) {
             ref.collection("users")
@@ -56,13 +59,18 @@ const FoodResult = (props:Props) => {
                 .get()
                 .then(function (doc: any) {
                     if (doc.exists) {
-                        setIngredients(doc.data().ingredients);
+                        console.log("here")
+                        console.log("my stuff", doc.data().lists)
+                        //setIngredients(doc.data().listingredients);
                     } else {
-                        firebase
+                        console.log("failed")
+
+                        /**firebase
                             .firestore()
                             .collection("users")
                             .doc(user.uid)
                             .set({ ingredients: [] });
+                            */
                     }
                 });
         }
@@ -70,7 +78,8 @@ const FoodResult = (props:Props) => {
             .doc(props.id)
             .get()
             .then(function (doc: any) {
-                setRecipeIngredients(doc.data().data.ingredients);
+                console.log("hi")
+                //setRecipeIngredients(doc.data().data.ingredients);
             });
     }, []);
     return (

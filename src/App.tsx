@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import PrivateRoute from "./components/PrivateRoute";
 import { PrivateRouteProps } from "./ts/interfaces";
 import {AuthProvider} from "./contexts/AuthContext";
+import { IngredientsListProvider } from "./contexts/IngredientsListContext";
 
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
     return (
         <div>
             <AuthProvider>
+            <IngredientsListProvider>
                 <Router>
                     <Nav />
                     <Routes>
@@ -34,7 +36,8 @@ const App = () => {
                         <Route path="/recipe/:id" element={<RecipePage />}/>
                         <Route path="/search" element={<Search />}/>
                     </Routes>
-                </Router> 
+                </Router>
+            </IngredientsListProvider> 
             </AuthProvider>
         </div>
     );

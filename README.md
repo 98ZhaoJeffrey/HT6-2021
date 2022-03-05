@@ -7,9 +7,10 @@ Original GitHub repo for HT6: https://github.com/RyanL123/HT6-2021
 
 -   ~Convert JS to TS~
 -   ~Implement multiple lists~
--   Switch to React context for user auth
--   Create search bar
+-   ~Switch to React context for user auth~
+-   Create search bar (need to integrate with API)
 -   Integrate an API to work with pagination
 -   Add history and rating system
 -   Create a lowest price locator
 -   Deploy website
+-   Use own dataset since the API doesn't allow many api calls
