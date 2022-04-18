@@ -1,6 +1,5 @@
 import React, { useState, useEffect} from "react";
 import {
-    chakra,
     Box,
     Button,
     Image,
@@ -18,8 +17,12 @@ import {
     NumberDecrementStepper,
 } from "@chakra-ui/react";
 import { Link, useParams } from "react-router-dom";
-import firebase from "../firebase";
-import {Recipe} from "../ts/interfaces";
+import {Recipe, Review, Ingredients} from "../ts/interfaces";
+import {Unit} from "../ts/types"
+import ExampleRecipe from "./ExampleRecipe.json"
+import { useIngredientsListContext } from "../contexts/IngredientsListContext";
+import Reviews from "../components/Reviews";
+import firebase from "firebase";
 
 //make it so we can push to user history after finish making
 
@@ -31,20 +34,33 @@ type RecipeID = {
 
 const RecipePage = () => {
     const [servings, setServings] = useState<number>(1);
-    const [recipeIngredients, setRecipeIngredients] = useState([]);
-    const [recipe, setRecipe] = useState<Recipe>({} as Recipe);
-    const { id } = useParams<RecipeID>()
-    const ref = firebase.firestore().collection("recipes").doc(id);
+    const [ingredients, setIngredients] = useIngredientsListContext()[0];
+    const [recipeData, setRecipeData] = useState<Recipe>({} as Recipe);
+    const { id } = useParams<RecipeID>();
+
     useEffect(() => {
         console.log(id);
-        ref.get().then(function (doc:any) {
-            if (doc.exists) {
-                setRecipe(doc.data().data);
-                console.log(doc.data().data);
-            } else {
-            }
-        });
+        const data = ExampleRecipe;
+        const recipe = data.find(x => x.id === id);
+        if(recipe != null){
+            setRecipeData({
+                "id": recipe["id"],
+                "name": recipe["name"],
+                "description": recipe["description"],
+                "image": recipe["image"],
+                "steps": recipe["steps"],
+                "time": recipe["time"],
+                "ingredients": recipe["ingredients"].map((ingredient) => {
+                    return{
+                        "name": ingredient["name"],
+                        "amount": ingredient["amount"],
+                        "unit": ingredient["unit"] as Unit
+                    }
+                })
+            });
+        }
     }, []);
+
     return (
         <Center w="100%">
             <Flex
@@ -55,12 +71,12 @@ const RecipePage = () => {
             >
                 <Flex direction="column">
                     <Heading textAlign={["center", null, "left"]}>
-                        {recipe.name}
+                        {recipeData.name}
                     </Heading>
                     <Image
-                        src={recipe.image}
+                        src={recipeData.image}
                         fallbackSrc="https://via.placeholder.com/150"
-                        boxSize="50vh"
+                        boxSize={{base: "80vw", md: "40vw", lg:"25vw"}}
                         borderRadius="5%"
                         alignSelf="center"
                         objectFit="cover"
@@ -86,8 +102,8 @@ const RecipePage = () => {
                         </Flex>
 
                         <Stack spacing={4} direction="column">
-                            {recipe.ingredients
-                                ? recipe.ingredients.map((ingredient) => (
+                            {recipeData.ingredients
+                                ? recipeData.ingredients.map((ingredient) => (
                                       <Checkbox
                                           colorScheme="green"
                                           size="lg"
@@ -108,8 +124,8 @@ const RecipePage = () => {
                         direction="column"
                         divider={<StackDivider borderColor="gray.200" />}
                     >
-                        {recipe.steps
-                            ? recipe.steps.map((step, index) => (
+                        {recipeData.steps
+                            ? recipeData.steps.map((step, index) => (
                                   <Box>
                                       <Checkbox colorScheme="green" size="lg">
                                           Step {index + 1}
@@ -122,6 +138,7 @@ const RecipePage = () => {
                     <Button mt="2rem">
                         <Link to="/dashboard">I made this recipe!</Link>
                     </Button>
+                    <Reviews/>
                 </Box>
             </Flex>
         </Center>

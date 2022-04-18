@@ -1,13 +1,10 @@
 import { Unit } from "./types";
-import firebase from "firebase";
+import firebase from 'firebase/app';
+
 export interface Ingredients{
     name: string,
     amount: number,
     unit: Unit
-}
-
-export interface Steps{
-    step: string
 }
 
 export interface Recipe{
@@ -15,12 +12,22 @@ export interface Recipe{
     name: string,
     description: string,
     image: string,
-    steps: Steps[],
+    steps: string[],
+    time: number,
     ingredients: Ingredients[]
 }
-
 
 export interface PrivateRouteProps{
     authenticationPath: string,
     outlet: JSX.Element,
   };
+
+export interface Review{
+    user: string,
+    userId: string,
+    comment: string,
+    rating: number,
+    date: firebase.firestore.Timestamp,
+    likes: string[],
+    dislikes: string[]
+}

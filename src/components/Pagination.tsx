@@ -32,38 +32,36 @@ const Pagination = () => {
     };
     return (
         <Flex
-            bg={useColorModeValue("white", "gray.600")}
-            p={50}
-            w="full"
-            alignItems="center"
-            justifyContent="center"
-        >
-            <HStack>
-                <PagButton disabled={0} active={false} >
-                    <Icon
-                        as={IoIosArrowBack}
-                        color={useColorModeValue("gray.700", "gray.200")}
-                        boxSize={4}
-                    />
-                </PagButton>
-                <PagButton disabled={0} active={false} >1</PagButton>
-                <PagButton disabled={0} active={false} >2</PagButton>
-                <PagButton disabled={0} active={false} >3</PagButton>
-                <PagButton disabled={0} active={false} >4</PagButton>
-                <PagButton disabled={0} active={false} >5</PagButton>
-                <PagButton disabled={0} active={false}>
-                    <Icon
-                    as={IoIosArrowForward}
-                    color={useColorModeValue("gray.700", "gray.200")}
-                    boxSize={4}
-                    />
-                </PagButton>
-                <HStack>
-                    <Text wordBreak={"unset"}>Go to:</Text>
-                    <Input w="50px" />
-                </HStack>
-            </HStack>
+        bg={useColorModeValue("#F9FAFB", "gray.600")}
+        p={50}
+        w="full"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Flex>
+          <PagButton disabled={0} active={false}>
+            <Icon
+              as={IoIosArrowBack}
+              color={useColorModeValue("gray.700", "gray.200")}
+              boxSize={4}
+            />
+          </PagButton>
+          <PagButton disabled={0} active={false}>1</PagButton>
+          <PagButton disabled={0} active={false}>5</PagButton>
+          <PagButton disabled={0} active={false}>6</PagButton>
+          <PagButton active disabled={0}>7</PagButton>
+          <PagButton disabled={0} active={false}>8</PagButton>
+          <PagButton disabled={0} active={false}>9</PagButton>
+          <PagButton disabled={0} active={false}>50</PagButton>
+          <PagButton disabled={0} active={false} >
+            <Icon
+              as={IoIosArrowForward}
+              color={useColorModeValue("gray.700", "gray.200")}
+              boxSize={4}
+            />
+          </PagButton>
         </Flex>
+      </Flex>
     );
 };
 

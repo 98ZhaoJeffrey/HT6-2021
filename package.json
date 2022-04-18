@@ -5,6 +5,7 @@
     "dependencies": {
         "@chakra-ui/icons": "^1.0.15",
         "@chakra-ui/react": "^1.8.3",
+        "@choc-ui/paginator": "^3.4.0",
         "@emotion/react": "^11",
         "@emotion/styled": "^11",
         "@types/jest": "^27.4.0",

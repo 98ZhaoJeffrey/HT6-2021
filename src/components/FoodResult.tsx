@@ -6,25 +6,22 @@ import {
     Text,
     useColorModeValue,
     Heading,
-    Input
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import firebase from "../firebase";
 import {AuthContext} from "../contexts/AuthContext";
 import {Ingredients} from "../ts/interfaces";
 
-//interface Ingredients{
-//    name: string,
-//    amount: number,
-//}
 //should change this to use types as well but we will see when we use the api
 
 interface Props{
-    link: string,
-    title: string,
+    name: string,
     image: string,
     description: string,
-    id: string
+    id: string,
+    steps: string[],
+    time: number,
+    ingredients: Ingredients[]
 }
 
 const calculateMatch = (recipeIngredients:Ingredients[], ingredients: Ingredients[]) => {
@@ -46,7 +43,7 @@ const calculateMatch = (recipeIngredients:Ingredients[], ingredients: Ingredient
     return denom === 0 ? 0 : Math.round((num * 100) / denom);
 }
 
-const FoodResult = (props:Props) => {
+const FoodResult = (props: Props) => {
     const user = useContext(AuthContext);
     const [ingredients, setIngredients] = useState<Ingredients[]>([]);
     const [recipeIngredients, setRecipeIngredients] = useState<Ingredients[]>([]);
@@ -59,18 +56,10 @@ const FoodResult = (props:Props) => {
                 .get()
                 .then(function (doc: any) {
                     if (doc.exists) {
-                        console.log("here")
                         console.log("my stuff", doc.data().lists)
                         //setIngredients(doc.data().listingredients);
                     } else {
                         console.log("failed")
-
-                        /**firebase
-                            .firestore()
-                            .collection("users")
-                            .doc(user.uid)
-                            .set({ ingredients: [] });
-                            */
                     }
                 });
         }
@@ -78,10 +67,9 @@ const FoodResult = (props:Props) => {
             .doc(props.id)
             .get()
             .then(function (doc: any) {
-                console.log("hi")
-                //setRecipeIngredients(doc.data().data.ingredients);
             });
     }, []);
+
     return (
         <Flex
             bg={useColorModeValue("#F9FAFB", "gray.600")}
@@ -119,14 +107,20 @@ const FoodResult = (props:Props) => {
                         color={useColorModeValue("gray.800", "white")}
                         fontWeight="bold"
                     >
-                        <Link to={props.link}>{props.title}</Link>
+                        <Link to={`/recipe/${props.id}`}>{props.name}</Link>
                     </chakra.h2>
                     <Text
                         mt={4}
                         color={useColorModeValue("gray.600", "gray.400")}
-                        noOfLines={3}
+                        noOfLines={4}
                     >
                         {props.description}
+                    </Text>
+                    <Text
+                        mt={4}
+                        color={useColorModeValue("gray.600", "gray.400")}
+                    >
+                        Cook time: {props.time} mins
                     </Text>
                     <Box mt={8}>
                         <Heading size="md@">

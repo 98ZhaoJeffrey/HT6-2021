@@ -6,8 +6,6 @@ import {
     Heading,
     Avatar,
     Input,
-    FormControl,
-    FormLabel,
     InputRightAddon,
     InputGroup,
     Select,
@@ -20,7 +18,6 @@ import {
     TabPanel,
     Text,
     Table,
-    TableCaption,
     Tbody,
     Td,
     Tfoot,
@@ -31,8 +28,7 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList,
-    Flex
+    MenuList
 } from "@chakra-ui/react";
 import firebase from "../firebase";
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -47,10 +43,6 @@ const units: Unit[] = ["ea", "ml", "L", "oz", "pt", "qt", "gals", "lbs", "mg", "
 const Dashboard = () => {
     const user = useContext(AuthContext);
     
-    //keep track of the ingredients and the list's name
-    //const [currentIngredients, setCurrentIngredients] = useIngredientsListContext()[0];
-    //const [currentListName, setCurrentListName] = useIngredientsListContext()[1];
-
     // setting and modifying ingredients
     const [ingredients, setIngredients] = useIngredientsListContext()[0];
     //useState<Ingredients[]>([]);
@@ -221,7 +213,7 @@ const Dashboard = () => {
     // get data from firebase and store into state
     useEffect(() => {
         console.log(user)
-        ref.get().then(function (doc: firebase.firestore.DocumentData) {
+        ref.get().then((doc: firebase.firestore.DocumentData) => {
             if (doc.exists) {       
                 setIngredientLists(doc.data().lists);
             }
@@ -231,10 +223,11 @@ const Dashboard = () => {
                     .collection("users")
                     .doc(user!.uid)
                     .set({ lists: {"My first list" : []}});
-                console.log("Initialize user")
+                console.log("Initialize user");
+                setIngredientLists({"My first list" : []});
             }                
-            console.log(doc.data().lists); 
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -264,10 +257,7 @@ const Dashboard = () => {
                     </Heading>
                     <Button
                         mt="20px"
-                        onClick={() => {
-                            firebase.auth().signOut();
-
-                        }}
+                        onClick={() => firebase.auth().signOut()}
                         colorScheme="red"
                     >
                         Log Out
