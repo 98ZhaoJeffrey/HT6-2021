@@ -56,7 +56,7 @@ const FoodResult = (props: Props) => {
                 .get()
                 .then(function (doc: any) {
                     if (doc.exists) {
-                        console.log("my stuff", doc.data().lists)
+                        console.log(doc.data().lists)
                         //setIngredients(doc.data().listingredients);
                     } else {
                         console.log("failed")

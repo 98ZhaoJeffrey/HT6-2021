@@ -23,13 +23,13 @@ type RecipeID = {
 const Reviews = () => {
     const user = useContext(AuthContext);
     const [rating, setRating] = useState(0);
-    const [reviews, setReviews] = useState<Record<string, Review>>({});
+    const [reviews, setReviews] = useState<{ [key: string]: Review} >({});
     const toast = useToast();
     const { id } = useParams<RecipeID>();
     const ref = firebase.firestore().collection("reviews").doc(id);
     const comment = useRef<HTMLTextAreaElement>(null);
 
-    useEffect(() =>{
+    useEffect(() => {
         ref.get().then((doc: firebase.firestore.DocumentData) => {
             if(doc.exists){
                 setReviews(doc.data().reviews);
@@ -39,7 +39,7 @@ const Reviews = () => {
             }
         })
     }, []);
-
+    
     const updateReview = (updatedReview: Review, reviewer: string) => {
         ref.update({reviews: {...reviews, [reviewer] : updatedReview}});
         setReviews(prevState => { return {...prevState, [reviewer] : updatedReview}});
@@ -116,8 +116,9 @@ const Reviews = () => {
             {Object.keys(reviews).length === 0 ? 
                 <Text fontSize='xl' fontWeight={'600'}> 
                 There are no reviews yet... You could be the first one! 
-                </Text> : Object.keys(reviews).map((key) =>{ return(<Rating review={reviews[key]} userId={key} 
-                updateReview={updateReview} deleteReview={deleteReview}/>)})}
+                </Text> : Object.entries(reviews).sort((a, b) => { return b[1]['date'].seconds - a[1]['date'].seconds}).map(
+                    (data) => {return <Rating review={data[1]} userId={data[0]} updateReview={updateReview} deleteReview={deleteReview}/>})
+                }
         </VStack>
     );
 };

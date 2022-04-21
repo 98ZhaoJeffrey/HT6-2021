@@ -62,17 +62,17 @@ const Rating = (prop: Props) =>{
     const [liked, setLiked] = useState<Liked>(UserLiked(prop.review.likes, prop.review.dislikes, user));
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [rating, setRating] = useState(prop.review.rating);
-    const comment = useRef<HTMLTextAreaElement>(null);
+    const commentRef = useRef<HTMLTextAreaElement>(null);
     const { id } = useParams<RecipeID>();
     const ref = firebase.firestore().collection("reviews").doc(id as string);
 
     const updateComment = () => {
-        if(comment && comment.current){
-            if(comment.current.value !== prop.review.comment || rating !== prop.review.rating){
+        if(commentRef && commentRef.current){
+            if(commentRef.current.value !== prop.review.comment || rating !== prop.review.rating){
                 const review: Review = {
                     user: prop.review.user,
                     userId: prop.review.userId,
-                    comment: comment.current.value,
+                    comment: commentRef.current.value,
                     date: firebase.firestore.Timestamp.fromDate(new Date()),
                     likes: prop.review.likes,
                     dislikes: prop.review.dislikes,
@@ -135,7 +135,7 @@ const Rating = (prop: Props) =>{
             <Box w="100%">
                 <Divider/>
                 <Text fontSize='3xl' fontWeight="600">{prop.review.user}</Text>
-                <Text fontSize='xl' fontWeight="400">Last Updated: {prop.review.date.toDate().toLocaleDateString('pt-CA')}</Text>
+                <Text fontSize='xl' fontWeight="400">Last Updated: {prop.review.date.toDate().toDateString()}</Text>
                 <Flex alignItems={'center'} height="50">
                     <Text fontSize='lg'>Rating:</Text>
                     {Array(5)
@@ -201,7 +201,7 @@ const Rating = (prop: Props) =>{
                 <ModalBody pb={6}>
                 </ModalBody>
                     <FormControl>
-                    <Textarea placeholder='Edit your review' w='95%' ref={comment}>{prop.review.comment}</Textarea>
+                    <Textarea placeholder='Edit your review' w='95%' ref={commentRef}>{prop.review.comment}</Textarea>
                     <Flex>    
                         <Text fontSize='lg'>Overall Rating:</Text>
                         {Array(5)

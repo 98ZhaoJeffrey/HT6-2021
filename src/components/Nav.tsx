@@ -17,25 +17,12 @@ import {
 import { Link } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
 import logo from "../assets/logo.png";
-import firebase from "../firebase";
 import { AuthContext } from "../contexts/AuthContext";
 
 const Nav = () => {
     const user = useContext(AuthContext);
     const bg = useColorModeValue("white", "gray.800");
     const mobileNav = useDisclosure();
-    const signIn = async () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        try{
-            const result = await firebase.auth().signInWithPopup(provider)
-            // Redirect to dashboard
-            window.location.href = "/dashboard";
-        }catch(error: any){
-            console.log(error.code);
-            console.log(error.message);
-            console.log(error.credential);
-        };
-    }
 
     return (
         <React.Fragment>
@@ -90,7 +77,7 @@ const Nav = () => {
                             ) : (
                                 <Button
                                     variant="ghost"
-                                    onClick={() => signIn()}
+                                    onClick={() => {window.location.href = "/login";}}
                                 >
                                     Sign in
                                 </Button>
@@ -126,7 +113,7 @@ const Nav = () => {
                                     aria-label="Close menu"
                                     onClick={mobileNav.onClose}
                                 />
-                                <Button w="full" variant="ghost" onClick={() => {signIn()}}>
+                                <Button w="full" variant="ghost" onClick={() => {window.location.href = "/login";}}>
                                     Sign in
                                 </Button>
                             </VStack>

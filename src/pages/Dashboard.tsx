@@ -54,8 +54,7 @@ const Dashboard = () => {
     const [selectedList, setSelectedList] = useState<string>("");
 
     const [currentList, setCurrentList] = useIngredientsListContext()[1];
-    //useState<string>("");
-    const [ingredientLists, setIngredientLists] = useState<Record<string, Ingredients[]>>({});
+    const [ingredientLists, setIngredientLists] = useState<{ [key: string]: Ingredients[]} >({});
 
     //for switching tabs
     const [currentTab, setCurrentTab] = useState<number>(0);
