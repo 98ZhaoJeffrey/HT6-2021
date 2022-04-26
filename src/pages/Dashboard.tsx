@@ -67,7 +67,6 @@ const Dashboard = () => {
         console.table(ingredientLists)
         ref.update({lists: ingredientLists});
         setIngredients(updatedIngredients);
-        //setCurrentIngredients(updatedIngredients);
         setIngredientLists(ingredientLists);
     }
 
@@ -221,7 +220,7 @@ const Dashboard = () => {
                     .firestore()
                     .collection("users")
                     .doc(user!.uid)
-                    .set({ lists: {"My first list" : []}});
+                    .set({favorites: [], history: [], lists: {"My first list" : []}});
                 console.log("Initialize user");
                 setIngredientLists({"My first list" : []});
             }                

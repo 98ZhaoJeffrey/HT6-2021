@@ -21,4 +21,3 @@ export const IngredientsListProvider = ({children} : {children : ReactNode}) => 
     )
 };
 
-export default {IngredientsListProvider, useIngredientsListContext}

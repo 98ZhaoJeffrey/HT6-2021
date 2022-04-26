@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo} from "react";
+import React, { useState, useEffect} from "react";
 import { 
     Button,
     Flex,
@@ -16,8 +16,6 @@ import { useIngredientsListContext } from "../contexts/IngredientsListContext";
 import {Recipe, Ingredients} from "../ts/interfaces";
 import {Unit} from "../ts/types"
 import ExampleRecipe from "./ExampleRecipe.json"
-import { AiOutlineConsoleSql } from "react-icons/ai";
-import RecipePage from "./Recipe";
 
 const Search = () => {
     const [ingredients, setIngredients] = useIngredientsListContext()[0];
