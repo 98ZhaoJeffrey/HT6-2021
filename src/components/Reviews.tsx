@@ -24,6 +24,7 @@ const Reviews = () => {
     const user = useContext(AuthContext);
     const [rating, setRating] = useState(0);
     const [reviews, setReviews] = useState<{ [key: string]: Review} >({});
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const toast = useToast();
     const { id } = useParams<RecipeID>();
     const ref = firebase.firestore().collection("reviews").doc(id);
@@ -39,10 +40,51 @@ const Reviews = () => {
             }
         })
     }, []);
+
+    const checkProfanity = async (review: String) => {
+        const body = JSON.stringify({
+            "review": review
+        });
+
+        const options = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: body,
+        };
+
+        const response = await fetch(
+            'https://us-central1-foodaddtech.cloudfunctions.net/cleanReview',
+            options
+        );
+
+        const result = await response.json();
+
+        return !result;
+
+    }
     
-    const updateReview = (updatedReview: Review, reviewer: string) => {
-        ref.update({reviews: {...reviews, [reviewer] : updatedReview}});
-        setReviews(prevState => { return {...prevState, [reviewer] : updatedReview}});
+    const updateReview = async (updatedReview: Review, reviewer: string) => {
+        if(await checkProfanity(updatedReview.comment)){
+            ref.update({reviews: {...reviews, [reviewer] : updatedReview}});
+            setReviews(prevState => { return {...prevState, [reviewer] : updatedReview}});
+            toast({
+                title: 'Review updated!',
+                description: "Your review is now updated for everyone to see",
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            })
+        }
+        else{
+            toast({
+                title: 'Please do not use profanity',
+                description: "Your review was not updated because there was profanity found",
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            })
+        }
+
     }
 
     const deleteReview = () => {
@@ -51,38 +93,54 @@ const Reviews = () => {
         setReviews(prevState => { return {...prevState}});
     }
 
-    const submitRating = () => {
-        console.log(id)
-        ref.get().then((doc: firebase.firestore.DocumentData) => {
+    const submitRating = async () => {
+        setIsSubmitting(true);
+        try{
+            const doc = await ref.get();
             if(comment && comment.current){
                 // do a filter check here before we save to db
-                const review: Review = {
-                    user: user!.displayName!,
-                    userId: user!.uid,
-                    comment: comment.current.value,
-                    date: firebase.firestore.Timestamp.fromDate(new Date()),
-                    likes: [user!.uid],
-                    dislikes: [],
-                    rating: rating
-                };
-                if(doc.exists){
-                    reviews[user!.uid] = review;
-                    ref.update({reviews: reviews});
-                    setReviews(prevState => { return {...prevState, [user!.uid] : review}});
-                }else if(user && user.uid){
-                    setReviews({[user.uid]: review});
-                    ref.set({'reviews': reviews});
+                if(await checkProfanity(comment.current.value)){
+                    const review: Review = {
+                        user: user!.displayName!,
+                        userId: user!.uid,
+                        comment: comment.current.value,
+                        date: firebase.firestore.Timestamp.fromDate(new Date()),
+                        likes: [user!.uid],
+                        dislikes: [],
+                        rating: rating
+                    };
+                    if(doc.exists){
+                        reviews[user!.uid] = review;
+                        ref.update({reviews: reviews});
+                        setReviews(prevState => { return {...prevState, [user!.uid] : review}});
+                    }else if(user && user.uid){
+                        setReviews({[user.uid]: review});
+                        ref.set({'reviews': reviews});
+                    }
+                    toast({
+                        title: 'Review posted!',
+                        description: "Your review is now live for everyone to see",
+                        status: 'success',
+                        duration: 5000,
+                        isClosable: true,
+                    })
                 }
+                else{
+                    toast({
+                        title: 'Please do not use profanity',
+                        description: "Your review was not posted because there was profanity found",
+                        status: 'error',
+                        duration: 5000,
+                        isClosable: true,
+                    })
+                }
+                setIsSubmitting(false);
                 comment.current.value = '';
-                toast({
-                    title: 'Review posted!',
-                    description: "Your review is now live for everyone to see",
-                    status: 'success',
-                    duration: 5000,
-                    isClosable: true,
-                  })
             }
-        })
+        }
+        catch(error){
+            console.log(error);
+        }
     }
 
     return(
@@ -109,6 +167,8 @@ const Reviews = () => {
                     variant='ghost'
                     onClick={submitRating}
                     disabled={false}
+                    isLoading={isSubmitting}
+                    loadingText='Submitting'
                 >
                     Submit review
                 </Button>
