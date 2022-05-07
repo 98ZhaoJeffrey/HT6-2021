@@ -15,6 +15,7 @@ export interface Recipe {
     steps: string[],
     time: number,
     ingredients: Ingredients[]
+    similarity? : number
 }
 
 export interface PrivateRouteProps {

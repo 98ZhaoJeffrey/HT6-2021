@@ -15,7 +15,7 @@ useBreakpointValue,
 useColorModeValue,
 Image,
 } from '@chakra-ui/react'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, {useState, useRef} from 'react'
 import { PasswordField } from '../components/PasswordField';
 import Carousels from '../components/Carousels';
@@ -36,12 +36,13 @@ const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
   
   const GoogleSignIn = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     try{
         await firebase.auth().signInWithPopup(provider)
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
     }catch(error: any){
         console.log(error.code);
         console.log(error.message);

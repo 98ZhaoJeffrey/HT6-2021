@@ -6,6 +6,7 @@ import {
     Text,
     useColorModeValue,
     Heading,
+    Image
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import firebase from "../firebase";
@@ -21,26 +22,8 @@ interface Props{
     id: string,
     steps: string[],
     time: number,
-    ingredients: Ingredients[]
-}
-
-const calculateMatch = (recipeIngredients:Ingredients[], ingredients: Ingredients[]) => {
-    let num = 0;
-    let denom = 0;
-    // nested loop to match ingredients
-    for (let i = 0; i < recipeIngredients.length; i++) {
-        let name = recipeIngredients[i].name;
-        denom += recipeIngredients[i].amount;
-        for (let j = 0; j < ingredients.length; j++) {
-            if (ingredients[j].name === name) {
-                num += Math.min(
-                    ingredients[j].amount,
-                    recipeIngredients[i].amount
-                );
-            }
-        }
-    }
-    return denom === 0 ? 0 : Math.round((num * 100) / denom);
+    ingredients: Ingredients[],
+    similarity? : number
 }
 
 const FoodResult = (props: Props) => {
@@ -72,7 +55,7 @@ const FoodResult = (props: Props) => {
 
     return (
         <Flex
-            bg={useColorModeValue("#F9FAFB", "gray.600")}
+            bg={useColorModeValue("white", "gray.600")}
             p={50}
             w="full"
             alignItems="center"
@@ -87,15 +70,14 @@ const FoodResult = (props: Props) => {
                 rounded={{ lg: "lg" }}
             >
                 <Box w={{ lg: "50%" }}>
-                    <Box
-                        objectPosition="center center"
-                        h={{ base: 64, lg: "full" }}
+                    <Image
                         rounded={{ lg: "lg" }}
-                        bgSize="cover"
-                        backgroundImage={props.image}
-                    ></Box>
+                        loading="lazy"
+                        src={props.image}
+                        alt={props.name}
+                        boxSize='md'
+                    />
                 </Box>
-
                 <Box
                     py={12}
                     px={6}
@@ -124,7 +106,7 @@ const FoodResult = (props: Props) => {
                     </Text>
                     <Box mt={8}>
                         <Heading size="md@">
-                            {calculateMatch(recipeIngredients, ingredients)}%
+                            {props.similarity}%
                             Match
                         </Heading>
                     </Box>

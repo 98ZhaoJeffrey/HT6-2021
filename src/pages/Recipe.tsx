@@ -30,15 +30,11 @@ import {
 import { useParams } from "react-router-dom";
 import {Recipe, Review, Ingredients, Page} from "../ts/interfaces";
 import {Unit} from "../ts/types"
-import ExampleRecipe from "./ExampleRecipe.json"
 import { useIngredientsListContext } from "../contexts/IngredientsListContext";
 import Reviews from "../components/Reviews";
 import firebase from "firebase";
 import {AuthContext} from "../contexts/AuthContext";
 import { InfoIcon } from "@chakra-ui/icons";
-
-//make it so we can push to user history after finish making
-
 
 //i have no idea why we need this to work
 type RecipeID = {
@@ -58,7 +54,6 @@ const RecipePage = () => {
 
     const [servings, setServings] = useState<number>(1);
     const [ingredients, setIngredients] = useIngredientsListContext()[0];
-    const [currentList, setCurrentList] = useIngredientsListContext()[1];
     const [recipeData, setRecipeData] = useState<Recipe>({} as Recipe);
     const [favorites, setFavorites] = useState<Page[]>([]);
     const { id } = useParams<RecipeID>();
@@ -118,30 +113,37 @@ const RecipePage = () => {
     };
 
     useEffect(() => {
-        const data = ExampleRecipe;
-        const recipe = data.find(x => x.id === id);
-        if(recipe != null){
-            setRecipeData({
-                "id": recipe["id"],
-                "name": recipe["name"],
-                "description": recipe["description"],
-                "image": recipe["image"],
-                "steps": recipe["steps"],
-                "time": recipe["time"],
-                "ingredients": recipe["ingredients"].map((ingredient) => {
-                    return{
-                        "name": ingredient["name"],
-                        "amount": ingredient["amount"],
-                        "unit": ingredient["unit"] as Unit
-                    }
-                })
-            });
-        }
-        ref.get().then((doc: firebase.firestore.DocumentData) => {
-            if (doc.exists) {
-                setFavorites(doc.data().favorites);
+        const getRecipe = async () => {
+            try{ 
+                const recipe = (await firebase.firestore().collection("recipes").doc(id).get()).data();
+                if(recipe != null){
+                    setRecipeData({
+                        "id": recipe["id"],
+                        "name": recipe["name"],
+                        "description": recipe["description"],
+                        "image": recipe["image"],
+                        "steps": recipe["steps"],
+                        "time": recipe["time"],
+                        "ingredients": recipe["ingredients"].map((ingredient: Ingredients) => {
+                            return{
+                                "name": ingredient["name"],
+                                "amount": ingredient["amount"],
+                                "unit": ingredient["unit"] as Unit
+                            }
+                        })
+                    });
+                }
+                const doc = await ref.get();
+                const data = doc.data();
+                if (data) {
+                    setFavorites(data.favorites);
+                }
+                console.log(ingredients)
+            }catch (error) {
+                console.log(error);
             }
-        });
+        }
+        getRecipe();
     }, [id]);
 
     return (

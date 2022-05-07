@@ -26,11 +26,12 @@ const App = () => {
 
     return (
         <div>
+            
             <AuthProvider>
             <IngredientsListProvider>
-                <Router>
-                    <Nav />
-                    <Routes>
+                <Router> 
+                    <Nav />   
+                    <Routes>    
                         <Route path="/" element={<Home/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/signup" element={<SignUp/>}/>

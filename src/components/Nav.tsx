@@ -14,7 +14,7 @@ import {
     IconButton,
     CloseButton,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
 import logo from "../assets/logo.png";
 import { AuthContext } from "../contexts/AuthContext";
@@ -23,6 +23,7 @@ const Nav = () => {
     const user = useContext(AuthContext);
     const bg = useColorModeValue("white", "gray.800");
     const mobileNav = useDisclosure();
+    const navigate = useNavigate();
 
     return (
         <React.Fragment>
@@ -77,7 +78,7 @@ const Nav = () => {
                             ) : (
                                 <Button
                                     variant="ghost"
-                                    onClick={() => {window.location.href = "/login";}}
+                                    onClick={() => {navigate("/login");}}
                                 >
                                     Sign in
                                 </Button>
@@ -113,7 +114,7 @@ const Nav = () => {
                                     aria-label="Close menu"
                                     onClick={mobileNav.onClose}
                                 />
-                                <Button w="full" variant="ghost" onClick={() => {window.location.href = "/login";}}>
+                                <Button w="full" variant="ghost" onClick={() => {navigate("/login");}}>
                                     Sign in
                                 </Button>
                             </VStack>

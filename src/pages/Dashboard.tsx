@@ -51,7 +51,6 @@ const Dashboard = () => {
     
     // setting and creating lists
     const [newList, setNewList] = useState<string>("");
-    const [selectedList, setSelectedList] = useState<string>("");
 
     const [currentList, setCurrentList] = useIngredientsListContext()[1];
     const [ingredientLists, setIngredientLists] = useState<{ [key: string]: Ingredients[]} >({});
@@ -120,22 +119,35 @@ const Dashboard = () => {
                 isClosable: true,
             });
         } else {
-            toast({
-                title: "Ingredient Added!",
-                description: `Ingredient ${newIngredient} has been added!`,
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-            });
+            const findMatchingIngredient = ingredients.find((ingredient: Ingredients) => ingredient.name === newIngredient.toLowerCase());
+            if(findMatchingIngredient){
+                toast({
+                    title: "Ingredient already exists",
+                    description: `Ingredient ${newIngredient} already exists in your list`,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
+            else{
+                toast({
+                    title: "Ingredient Added!",
+                    description: `Ingredient ${newIngredient} has been added!`,
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                });
+    
+                let updatedIngredients = ingredients;
+                updatedIngredients.push(ingredient);
+                setIngredients(updatedIngredients);
+                ingredientLists[currentList] = updatedIngredients
+                ref.update({lists: ingredientLists});
+                setIngredientLists(ingredientLists)
+                setNewIngredient("");
+                setNewUnit({} as Unit);
 
-            let updatedIngredients = ingredients;
-            updatedIngredients.push(ingredient);
-            setIngredients(updatedIngredients);
-            ingredientLists[currentList] = updatedIngredients
-            ref.update({lists: ingredientLists});
-            setIngredientLists(ingredientLists)
-            setNewIngredient("");
-            setNewUnit({} as Unit);
+            }
         }
     }
 
@@ -175,7 +187,7 @@ const Dashboard = () => {
     }
 
     const selectList = () => {
-        if(selectedList === ""){
+        if(currentList === ""){
             toast({
                 title: "Invalid list",
                 description: "Invalid ingredient list!",
@@ -187,18 +199,15 @@ const Dashboard = () => {
         else{
             toast({
                 title: "Ingredient list loaded!",
-                description: `Ingredient list: ${selectedList} has been loaded`,
+                description: `Ingredient list: ${currentList} has been loaded`,
                 status: "success",
                 duration: 5000,
                 isClosable: true,
             });
             setCurrentTab(0);
-            setCurrentList(selectedList);
-            console.log(selectedList)
-            console.log(ingredientLists[selectedList])
-            setIngredients(ingredientLists[selectedList])
+            console.log(ingredientLists[currentList])
+            setIngredients(ingredientLists[currentList])
         }
-        setSelectedList("");
     }
 
     const deleteList = () => {
@@ -312,8 +321,8 @@ const Dashboard = () => {
                                 />
                                 <Select
                                     placeholder="Select your list"
-                                    value={selectedList}
-                                    onChange={(e) => setSelectedList(e.target.value)}
+                                    value={currentList}
+                                    onChange={(e) => setCurrentList(e.target.value)}
                                 >
                                     {Object.keys(ingredientLists).map((listName)=>{
                                         return <option value={listName}>{listName}</option>

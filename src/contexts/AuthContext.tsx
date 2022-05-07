@@ -13,7 +13,7 @@ export const AuthProvider = ({children} : {children : ReactNode}) => {
             console.log(currentUser)
         });
         return unsubscribe;
-    }, []);
+    });
 
     return(
         <AuthContext.Provider value={currentUser}>
@@ -21,5 +21,3 @@ export const AuthProvider = ({children} : {children : ReactNode}) => {
         </AuthContext.Provider>
     )
 };
-
-export default {AuthProvider, AuthContext}

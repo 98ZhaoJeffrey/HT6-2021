@@ -8,7 +8,8 @@ import {
     VStack,
     FormControl,
     useToast,
-    Textarea
+    Textarea,
+    typography
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import {AuthContext} from "../contexts/AuthContext";
@@ -51,16 +52,15 @@ const Reviews = () => {
             headers: { "Content-Type": "application/json" },
             body: body,
         };
+        try{
+            const response = await fetch('https://us-central1-foodaddtech.cloudfunctions.net/cleanReview', options);
 
-        const response = await fetch(
-            'https://us-central1-foodaddtech.cloudfunctions.net/cleanReview',
-            options
-        );
+            const result = await response.json();
 
-        const result = await response.json();
-
-        return !result;
-
+            return !result;
+        }catch (error){
+            console.log(error);
+        }
     }
     
     const updateReview = async (updatedReview: Review, reviewer: string) => {
