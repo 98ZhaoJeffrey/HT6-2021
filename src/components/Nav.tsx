@@ -41,12 +41,12 @@ const Nav = () => {
                 >
                     <Flex alignItems="center">
                         <chakra.a
-                            href="/"
                             title="Choc Home Page"
                             display="flex"
                             alignItems="center"
                         >
-                            <VisuallyHidden>Choc</VisuallyHidden>
+                            <Link to="/">
+                            </Link>
                         </chakra.a>
                         <Link to="/">
                             <Box display="flex" flex="row">

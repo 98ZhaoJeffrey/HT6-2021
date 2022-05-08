@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext, useRef, HTMLInputTypeAttribute} from "react";
 import { 
     CircularProgress,
     Flex,
     Input,
     InputGroup,
-    InputLeftElement,
+    InputRightElement,
     Select,
     Text
 } from "@chakra-ui/react";
@@ -18,6 +18,15 @@ import {Unit} from "../ts/types"
 import firebase from "firebase";
 import {AuthContext} from "../contexts/AuthContext";
 
+const Loading = () => {
+    return (
+        <Flex gap="1rem" direction="column" alignItems="center" mt="4rem">
+            <Text fontSize="2xl">Finding you the freshest recipes!</Text>
+            <CircularProgress isIndeterminate color='green.300' size="xs" thickness="4px"/>
+        </Flex>
+    )
+}
+
 const Search = () => {
     const user = useContext(AuthContext);
     const [ingredients, setIngredients] = useIngredientsListContext()[0];
@@ -29,14 +38,30 @@ const Search = () => {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [numResults, setNumResults] = useState(10);
     const [order, setOrder] = useState<string>("Matched ingredients");
-    const [searchParams] = useSearchParams();
-    const [page, setPage] = useState<number>(1);    
+    const [searchParams, setSearchParams] = useSearchParams();
     const ref = firebase.firestore().collection("users").doc(user!.uid);
+
+    const searchRef = useRef<HTMLInputElement>(null);
+
+    const parseNumber = (input: string | null) => {
+        if(input === null){
+            return 1;
+        }
+        return parseInt(input);
+    }
+
+    const parseString = (input: string | null) => {
+        if(input === null){
+            return "";
+        }
+        return input;
+    }
 
     // when user first access page, send request
     // only make new request when user changes ingredients list
     useEffect(()=>{
         const getData = async () => {
+            setLoading(true);
             try{
                 const body = JSON.stringify({
                     "order": order,
@@ -48,10 +73,11 @@ const Search = () => {
                     headers: { "Content-Type": "application/json" },
                     body: body,
                 };
-                const response = await fetch(`https://us-central1-foodaddtech.cloudfunctions.net/findRecipes?page=${page}`, options);
+                const response = await fetch(`https://us-central1-foodaddtech.cloudfunctions.net/findRecipes?page=${parseNumber(searchParams.get("page"))}
+                &search=${parseString(searchParams.get("search"))}`, options);
                 const result = (await response.json())["response"];
-                console.log(result);
-
+                console.log(result)
+    
                 const recipes: Recipe[] = result["data"].map((data: { [x: string]: any; }) =>{
                     const recipe = data["recipe"]
                     return{
@@ -73,18 +99,15 @@ const Search = () => {
                 })
                 setRecipes(recipes)
                 setNumResults(result["num-results"])
-                setLoading(false);
+                setLoading(false);                
             }catch (error){
-                const num = Number(searchParams.get('page'));
-                if(Number.isInteger(num) && num > 0){
-                    setPage(num);
-                }
                 console.log(error)
             }
         }
-        getData();
-        console.log(ingredients)
-    }, [ingredients, order]);
+        setTimeout(() => getData(), 1000);
+        console.log(ingredients);
+        
+    }, [ingredients, order, searchParams]);
 
     useEffect(() => {
         ref.get().then((doc: firebase.firestore.DocumentData) => {
@@ -110,17 +133,21 @@ const Search = () => {
         console.log("change ingredients")
     }, [currentList, ingredientLists])
 
+
+
     return (
         <Flex direction="column" alignItems={'center'} bg={"white"}>
             <InputGroup size="lg" width="80%" my="2rem">
-                <InputLeftElement
-                    pointerEvents='none'
+                <Input placeholder="Search" ref={searchRef}/>
+                <InputRightElement
+                    _hover={{"cursor": "pointer"}}
                     children={<SearchIcon color='green.500' />}
-                />
-                <Input
-                    placeholder="Search"
-                >
-                </Input>                
+                    onClick={() => {
+                        if(searchRef && searchRef.current){
+                           setSearchParams({"search": searchRef.current.value}); 
+                        }
+                    }}
+                />                    
             </InputGroup>
             <Flex width="80%" direction="row" gap='2'>
                 <Select onChange={(e) => {
@@ -141,10 +168,11 @@ const Search = () => {
                     })}
                 </Select>
             </Flex>
-            
             {currentList === "" ? 
-                <Text> Please select a list before continuing</Text> : 
-                loading ? <CircularProgress isIndeterminate color='green.300' /> : recipes.map((recipe: Recipe) => {return(<FoodResult {...recipe}/>)})
+                <Text>Please select a list before continuing</Text> : 
+                loading ? <Loading /> : 
+                recipes !== [] ? recipes.map((recipe: Recipe) => {return(<FoodResult {...recipe}/>)}) : 
+                <Text> We couldn't find anything, try adding ingredients or changing your query</Text>
             }
             {recipes !== [] &&
                 <Flex
@@ -155,10 +183,10 @@ const Search = () => {
                     justifyContent="center"
                 >
                     <Pagination
-                        current={page}
+                        current={parseNumber(searchParams.get("page"))}
                         onChange={(newPage)=>{
                             if(newPage != null){
-                                setPage(newPage);
+                                setSearchParams({"page": newPage.toString()});
                             }
                         }}
                         total={numResults}

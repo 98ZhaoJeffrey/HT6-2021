@@ -28,7 +28,7 @@ import {
     ButtonGroup,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
-import {Recipe, Review, Ingredients, Page} from "../ts/interfaces";
+import {Recipe, Ingredients, Page} from "../ts/interfaces";
 import {Unit} from "../ts/types"
 import { useIngredientsListContext } from "../contexts/IngredientsListContext";
 import Reviews from "../components/Reviews";
@@ -114,25 +114,27 @@ const RecipePage = () => {
 
     useEffect(() => {
         const getRecipe = async () => {
-            try{ 
-                const recipe = (await firebase.firestore().collection("recipes").doc(id).get()).data();
-                if(recipe != null){
-                    setRecipeData({
-                        "id": recipe["id"],
-                        "name": recipe["name"],
-                        "description": recipe["description"],
-                        "image": recipe["image"],
-                        "steps": recipe["steps"],
-                        "time": recipe["time"],
-                        "ingredients": recipe["ingredients"].map((ingredient: Ingredients) => {
-                            return{
-                                "name": ingredient["name"],
-                                "amount": ingredient["amount"],
-                                "unit": ingredient["unit"] as Unit
-                            }
-                        })
-                    });
-                }
+            try{
+                firebase.database().ref(`/recipe/${id}`).on('value', (snapshot) => {
+                    const recipe = snapshot.val();
+                    if(recipe != null){
+                        setRecipeData({
+                            "id": recipe["id"],
+                            "name": recipe["name"],
+                            "description": recipe["description"],
+                            "image": recipe["image"],
+                            "steps": recipe["steps"],
+                            "time": recipe["time"],
+                            "ingredients": recipe["ingredients"].map((ingredient: Ingredients) => {
+                                return{
+                                    "name": ingredient["name"],
+                                    "amount": ingredient["amount"],
+                                    "unit": ingredient["unit"] as Unit
+                                }
+                            })
+                        });
+                    }
+                })
                 const doc = await ref.get();
                 const data = doc.data();
                 if (data) {
@@ -144,6 +146,9 @@ const RecipePage = () => {
             }
         }
         getRecipe();
+        if(ingredients === undefined){
+            setIngredients([]);
+        }
     }, [id]);
 
     return (

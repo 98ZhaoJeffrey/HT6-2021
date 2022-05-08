@@ -8,8 +8,7 @@ import {
     VStack,
     FormControl,
     useToast,
-    Textarea,
-    typography
+    Textarea
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import {AuthContext} from "../contexts/AuthContext";
@@ -40,7 +39,7 @@ const Reviews = () => {
                 ref.set({'reviews': reviews});
             }
         })
-    }, []);
+    });
 
     const checkProfanity = async (review: String) => {
         const body = JSON.stringify({
@@ -56,11 +55,11 @@ const Reviews = () => {
             const response = await fetch('https://us-central1-foodaddtech.cloudfunctions.net/cleanReview', options);
 
             const result = await response.json();
-
-            return !result;
+            return !result["response"];
         }catch (error){
             console.log(error);
         }
+
     }
     
     const updateReview = async (updatedReview: Review, reviewer: string) => {
@@ -153,7 +152,7 @@ const Reviews = () => {
                     {Array(5)
                     .fill("")
                     .map((_, i) => (
-                        <Box as='button' disabled={false}>
+                        <Box as='button' disabled={Object.keys(reviews).includes(user!.uid)}>
                         <StarIcon
                             key={i}
                             color={i < rating ? "green.500" : "gray.300"}
@@ -166,11 +165,11 @@ const Reviews = () => {
                     mt='24px'
                     variant='ghost'
                     onClick={submitRating}
-                    disabled={false}
+                    disabled={Object.keys(reviews).includes(user!.uid)}
                     isLoading={isSubmitting}
                     loadingText='Submitting'
                 >
-                    Submit review
+                    {Object.keys(reviews).includes(user!.uid) ? "You have already submitted a review" : "Submit review"}
                 </Button>
             </FormControl>
             {Object.keys(reviews).length === 0 ? 

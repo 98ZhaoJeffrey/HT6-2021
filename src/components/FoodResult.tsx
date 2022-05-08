@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 import {
     chakra,
     Box,
@@ -9,8 +9,6 @@ import {
     Image
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import firebase from "../firebase";
-import {AuthContext} from "../contexts/AuthContext";
 import {Ingredients} from "../ts/interfaces";
 
 //should change this to use types as well but we will see when we use the api
@@ -27,31 +25,6 @@ interface Props{
 }
 
 const FoodResult = (props: Props) => {
-    const user = useContext(AuthContext);
-    const [ingredients, setIngredients] = useState<Ingredients[]>([]);
-    const [recipeIngredients, setRecipeIngredients] = useState<Ingredients[]>([]);
-    const ref = firebase.firestore();
-    //const ref = firebase.firestore().collection("users").doc(user!.uid);
-    useEffect(() => {
-        if (user) {
-            ref.collection("users")
-                .doc(user.uid)
-                .get()
-                .then(function (doc: any) {
-                    if (doc.exists) {
-                        console.log(doc.data().lists)
-                        //setIngredients(doc.data().listingredients);
-                    } else {
-                        console.log("failed")
-                    }
-                });
-        }
-        ref.collection("recipes")
-            .doc(props.id)
-            .get()
-            .then(function (doc: any) {
-            });
-    }, []);
 
     return (
         <Flex

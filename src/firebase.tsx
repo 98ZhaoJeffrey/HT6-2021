@@ -9,7 +9,8 @@ const firebaseConfig = {
   storageBucket: "foodaddtech.appspot.com",
   messagingSenderId: "984989408354",
   appId: "1:984989408354:web:35f48782daf52299dac53b",
-  measurementId: "G-YCLPFQNRH5"
+  measurementId: "G-YCLPFQNRH5",
+  databaseURL: "https://foodaddtech-default-rtdb.firebaseio.com/"
 };
 firebase.initializeApp(firebaseConfig);
 
