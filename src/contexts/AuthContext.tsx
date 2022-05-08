@@ -4,12 +4,17 @@ import firebase from "../firebase";
 
 export const AuthContext = createContext<firebase.User | null>(null);
 
+const parseUser = (user: string | null) => {
+    return (user === null) ? null : JSON.parse(user);
+}
+
 export const AuthProvider = ({children} : {children : ReactNode}) => {
-    const [currentUser, setCurrentUser] = useState<firebase.User | null>(null);
+    const [currentUser, setCurrentUser] = useState<firebase.User | null>(parseUser(localStorage.getItem("user")));
 
     useEffect(() => {
         const unsubscribe = firebase.auth().onAuthStateChanged(user => {
             setCurrentUser(user)
+            localStorage.setItem("user", JSON.stringify(user));
             console.log(currentUser)
         });
         return unsubscribe;

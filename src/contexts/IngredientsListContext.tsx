@@ -8,12 +8,14 @@ type IngredientsListType = [
     setCurrentListName: React.Dispatch<React.SetStateAction<string>>]
 ]
 
-export const IngredientsListContext= createContext<IngredientsListType | undefined>(undefined);
+
+export const IngredientsListContext = createContext<IngredientsListType | undefined>(undefined);
 
 export const useIngredientsListContext = () =>
   useContext(IngredientsListContext) as IngredientsListType;
 
 export const IngredientsListProvider = ({children} : {children : ReactNode}) => {
+
     return(
         <IngredientsListContext.Provider value={[useState<Ingredients[]>([]), useState<string>("")]}>
             { children }
