@@ -15,8 +15,14 @@ import PrivateRoute from "./components/PrivateRoute";
 import { PrivateRouteProps } from "./ts/interfaces";
 import {AuthProvider} from "./contexts/AuthContext";
 import { IngredientsListProvider } from "./contexts/IngredientsListContext";
-
-
+import { StepsStyleConfig as Steps } from 'chakra-ui-steps';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+const theme = extendTheme({
+    components: {
+      Steps,
+    },
+  });
+  
 
 const App = () => {
 
@@ -25,12 +31,11 @@ const App = () => {
       };
 
     return (
-        <div>
-            
-            <AuthProvider>
+    <ChakraProvider theme={theme}>
+        <AuthProvider>
             <IngredientsListProvider>
                 <Router> 
-                    <Nav />   
+                    <Nav/>   
                     <Routes>    
                         <Route path="/" element={<Home/>}/>
                         <Route path="/login" element={<Login/>}/>
@@ -41,12 +46,11 @@ const App = () => {
                         />
                         <Route path="/recipe/:id" element={<RecipePage />}/>
                         <Route path="/search" element={<Search />}/>
-
                     </Routes>
                 </Router>
             </IngredientsListProvider> 
-            </AuthProvider>
-        </div>
+        </AuthProvider>
+    </ChakraProvider>
     );
 };
 

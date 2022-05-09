@@ -25,9 +25,8 @@ import {
     IconButton,
     UnorderedList,
     ListItem,
-    ButtonGroup,
 } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {Recipe, Ingredients, Page} from "../ts/interfaces";
 import {Unit} from "../ts/types"
 import { useIngredientsListContext } from "../contexts/IngredientsListContext";
@@ -35,6 +34,7 @@ import Reviews from "../components/Reviews";
 import firebase from "firebase";
 import {AuthContext} from "../contexts/AuthContext";
 import { InfoIcon } from "@chakra-ui/icons";
+import VSteps from "../components/VSteps";
 
 //i have no idea why we need this to work
 type RecipeID = {
@@ -56,7 +56,8 @@ const RecipePage = () => {
     const [ingredients, setIngredients] = useIngredientsListContext()[0];
     const [recipeData, setRecipeData] = useState<Recipe>({} as Recipe);
     const [favorites, setFavorites] = useState<Page[]>([]);
-    const { id } = useParams<RecipeID>();
+    const { id } = useParams<RecipeID>() as { id: string };
+    const navigate = useNavigate();
     const ref = firebase.firestore().collection("users").doc(user!.uid);
     
     const hasEnoughIngredient = (searchIngredient: Ingredients): EnoughIngredient => {
@@ -92,7 +93,7 @@ const RecipePage = () => {
                 setIngredients(updatedIngredients); 
             }
         });
-        window.location.href = '/dashboard';   
+        navigate('/dashboard');   
     };
 
     const saveRecipe = () => {
@@ -100,16 +101,22 @@ const RecipePage = () => {
         ref.get().then((doc: firebase.firestore.DocumentData) => {
             if (doc.exists) {
                 if(favorites.filter((element: Page) => { return element.id === recipeData["id"]}).length === 0){
-                    ref.update({...doc.data, favorites: [page, ...favorites]});
+                    console.log(doc.data());
+                    console.log({...doc.data(), favorites: [page, ...favorites]});
+                    ref.set({favorites: [page, ...favorites]}, {merge: true});
                     setFavorites(prev => [page, ...prev]);            
                 }
                 else{
-                    ref.update({...doc.data, favorites: favorites.filter((element: Page) => { return element.id !== page.id})});
+                    ref.set({favorites: favorites.filter((element: Page) => { return element.id !== page.id})}, {merge: true});
                     setFavorites(favorites.filter((element: Page) => { return element.id !== page.id}));
                 } 
             }
+            else{
+                ref.set({favorites: [page], history: [page], lists: {"My first list" : []}});
+            }
+        }).catch((error) =>{
+            console.log(error)
         });
-
     };
 
     useEffect(() => {
@@ -117,9 +124,10 @@ const RecipePage = () => {
             try{
                 firebase.database().ref(`/recipe/${id}`).on('value', (snapshot) => {
                     const recipe = snapshot.val();
+                    console.log(recipe);
                     if(recipe != null){
                         setRecipeData({
-                            "id": recipe["id"],
+                            "id": id,
                             "name": recipe["name"],
                             "description": recipe["description"],
                             "image": recipe["image"],
@@ -227,31 +235,24 @@ const RecipePage = () => {
                     </Box>
                 </Flex>
                 <Box w={["90%", null, "50%"]} mt={["2rem", null, "0"]}>
-                    <Text fontSize="2xl">Instructions</Text>
+                    <Text fontSize="2xl" mb={"2rem"}>Instructions</Text>
                     <Stack
                         spacing={4}
                         direction="column"
                         divider={<StackDivider borderColor="gray.200" />}
                     >
-                        {recipeData.steps
-                            ? recipeData.steps.map((step, index) => (
-                                  <Box>
-                                      <Checkbox colorScheme="green" size="lg">
-                                          Step {index + 1}
-                                      </Checkbox>
-                                      <Text fontSize="lg">{step}</Text>
-                                  </Box>
-                              ))
-                            : null}
+                        {
+                            recipeData.steps &&
+                            <VSteps steps={recipeData.steps}>
+                                <Button onClick={madeRecipe}>
+                                    I made this recipe!
+                                </Button>
+                                <Button colorScheme='green' onClick={saveRecipe}>
+                                    {favorites.filter((element: Page) => { return element.id === recipeData["id"]}).length === 0 ? 'Save recipe' : 'Remove recipe'}
+                                </Button>
+                            </VSteps>
+                        }
                     </Stack>
-                    <ButtonGroup mt="2rem">
-                        <Button onClick={madeRecipe}>
-                            I made this recipe!
-                        </Button>
-                        <Button colorScheme='green' onClick={saveRecipe}>
-                            {favorites.filter((element: Page) => { return element.id === recipeData["id"]}).length === 0 ? 'Save recipe' : 'Remove recipe'}
-                        </Button>
-                    </ButtonGroup>
                     <Reviews/>
                 </Box>
             </Flex>

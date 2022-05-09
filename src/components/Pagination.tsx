@@ -10,7 +10,7 @@ interface Props{
 }
 
 const Pagination = () => {
-    const PagButton = (Props:Props) => {
+    const PagButton = (props:Props) => {
         const activeStyle = {
             bg: useColorModeValue("brand.600", "brand.500"),
             color: useColorModeValue("white", "gray.200"),
@@ -24,9 +24,9 @@ const Pagination = () => {
                 bg={useColorModeValue("green.400", "green.700")}
                 color={useColorModeValue("white.400", "gray.200")}
                 opacity={0.6}
-                {...(Props.active && activeStyle)}
+                {...(props.active && activeStyle)}
             >
-                {Props.children}
+                {props.children}
             </chakra.button>
         );
     };
