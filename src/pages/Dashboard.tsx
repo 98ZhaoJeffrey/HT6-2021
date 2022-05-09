@@ -352,7 +352,7 @@ const Dashboard = () => {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {ingredients.map((ingredient) =>{
+                    {ingredients && ingredients.map((ingredient) =>{
                         return(
                             <Tr>
                                 <Td>

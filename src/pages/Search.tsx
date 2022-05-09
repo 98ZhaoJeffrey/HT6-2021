@@ -136,7 +136,7 @@ const Search = () => {
 
 
     return (
-        <Flex direction="column" alignItems={'center'} bg={"white"}>
+        <Flex direction="column" alignItems={'center'} bg={"white"} h="92vh">
             <InputGroup size="lg" width="80%" my="2rem">
                 <Input placeholder="Search" ref={searchRef}/>
                 <InputRightElement
