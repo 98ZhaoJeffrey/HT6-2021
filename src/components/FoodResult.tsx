@@ -9,7 +9,8 @@ import {
     Image
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import {Ingredients} from "../ts/interfaces";
+import {Ingredients, Recipe} from "../ts/interfaces";
+import { StarIcon } from "@chakra-ui/icons";
 
 //should change this to use types as well but we will see when we use the api
 
@@ -21,14 +22,15 @@ interface Props{
     steps: string[],
     time: number,
     ingredients: Ingredients[],
-    similarity? : number
+    similarity? : number,
+    reviewCount: number,
+    average: number
 }
 
-const FoodResult = (props: Props) => {
+const FoodResult = (props: Recipe) => {
 
     return (
         <Flex
-            bg={useColorModeValue("white", "gray.600")}
             p={50}
             w="full"
             alignItems="center"
@@ -83,6 +85,11 @@ const FoodResult = (props: Props) => {
                             Match
                         </Heading>
                     </Box>
+                    <Flex mt={8} gap="1" alignItems="center">
+                        <StarIcon color="green.500"/> 
+                        <Box as="span" fontWeight="bold">{Math.round(props.average * 100) / 100}</Box>
+                        <Box as="span" color="gray.600" fontWeight="bold">({props.reviewCount} review(s))</Box>
+                    </Flex>
                 </Box>
             </Box>
         </Flex>

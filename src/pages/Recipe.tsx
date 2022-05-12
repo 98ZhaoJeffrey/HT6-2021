@@ -87,7 +87,7 @@ const RecipePage = () => {
                 if(history.length === 10){
                     history.pop();    
                 }
-                history.unshift({id: recipeData["id"], name: recipeData["name"]});
+                history.unshift({id: recipeData["id"], name: recipeData["name"], image: recipeData["image"]});
                 console.log(history)
                 ref.update({...doc.data, lists: {...doc.data().lists, currentList: updatedIngredients}, history: history});
                 setIngredients(updatedIngredients); 
@@ -97,7 +97,7 @@ const RecipePage = () => {
     };
 
     const saveRecipe = () => {
-        const page = {id: recipeData["id"], name: recipeData["name"]};        
+        const page = {id: recipeData["id"], name: recipeData["name"], image: recipeData["image"]};        
         ref.get().then((doc: firebase.firestore.DocumentData) => {
             if (doc.exists) {
                 if(favorites.filter((element: Page) => { return element.id === recipeData["id"]}).length === 0){
@@ -139,7 +139,9 @@ const RecipePage = () => {
                                     "amount": ingredient["amount"],
                                     "unit": ingredient["unit"] as Unit
                                 }
-                            })
+                            }),
+                            "average": recipe["average"],
+                            "reviewCount": recipe["reviewCount"]
                         });
                     }
                 })
@@ -190,7 +192,7 @@ const RecipePage = () => {
                                 min={1}
                                 w="20%"
                                 value={servings}
-                                onChange={(value) => setServings(parseInt(value))}
+                                onChange={(value: string) => setServings(parseInt(value))}
                             >
                                 <NumberInputField />
                                 <NumberInputStepper>
@@ -253,7 +255,7 @@ const RecipePage = () => {
                             </VSteps>
                         }
                     </Stack>
-                    <Reviews/>
+                    <Reviews average={recipeData["average"]} reviewCount={recipeData["reviewCount"]}/>
                 </Box>
             </Flex>
         </Center>

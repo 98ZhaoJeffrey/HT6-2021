@@ -15,7 +15,9 @@ export interface Recipe {
     steps: string[],
     time: number,
     ingredients: Ingredients[]
-    similarity? : number
+    similarity? : number,
+    reviewCount: number,
+    average: number
 }
 
 export interface PrivateRouteProps {
@@ -30,10 +32,11 @@ export interface Review {
     rating: number,
     date: firebase.firestore.Timestamp,
     likes: string[],
-    dislikes: string[]
+    dislikes: string[],
 }
 
 export interface Page {
     id: string,
-    name: string
+    name: string,
+    image: string
 }

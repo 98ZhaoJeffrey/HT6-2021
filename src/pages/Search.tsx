@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useContext, useRef, HTMLInputTypeAttribute} from "react";
+import React, { useState, useEffect, useContext, useRef} from "react";
 import { 
     CircularProgress,
     Flex,
+    IconButton,
     Input,
     InputGroup,
     InputRightElement,
@@ -94,7 +95,9 @@ const Search = () => {
                                 "unit": ingredient["unit"] as Unit
                             }
                         }),
-                        "similarity": Math.round(100 * recipe["similarity"])
+                        "similarity": Math.round(100 * recipe["similarity"]),
+                        "average": recipe["average"],
+                        "reviewCount": recipe["reviewCount"]
                     }
                 })
                 setRecipes(recipes)
@@ -136,12 +139,12 @@ const Search = () => {
 
 
     return (
-        <Flex direction="column" alignItems={'center'} bg={"white"} h="92vh">
+        <Flex direction="column" alignItems={'center'} >
             <InputGroup size="lg" width="80%" my="2rem">
                 <Input placeholder="Search" ref={searchRef}/>
                 <InputRightElement
                     _hover={{"cursor": "pointer"}}
-                    children={<SearchIcon color='green.500' />}
+                    children={<IconButton color='green.500' variant="ghost" icon={<SearchIcon />} aria-label="Search" />}
                     onClick={() => {
                         if(searchRef && searchRef.current){
                            setSearchParams({"search": searchRef.current.value}); 
@@ -150,7 +153,7 @@ const Search = () => {
                 />                    
             </InputGroup>
             <Flex width="80%" direction="row" gap='2'>
-                <Select onChange={(e) => {
+                <Select onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {
                     setOrder(e.target.value)
                     setLoading(false);
                 }}>
@@ -161,7 +164,7 @@ const Search = () => {
                 </Select>
                 <Select
                     value={currentList}
-                    onChange={(e) => setCurrentList(e.target.value)}
+                    onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setCurrentList(e.target.value)}
                 >
                     {Object.keys(ingredientLists).map((listName)=>{
                         return <option value={listName}>{listName}</option>
@@ -174,10 +177,9 @@ const Search = () => {
                 recipes !== [] ? recipes.map((recipe: Recipe) => {return(<FoodResult {...recipe}/>)}) : 
                 <Text> We couldn't find anything, try adding ingredients or changing your query</Text>
             }
-            {recipes !== [] &&
+            {recipes?.length !== 0 &&
                 <Flex
                     w="full"
-                    bg={"white"}
                     p={50}
                     alignItems="center"
                     justifyContent="center"

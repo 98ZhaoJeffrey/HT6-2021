@@ -2,32 +2,22 @@ import React, { useContext } from "react";
 import {
     Avatar,
     Box,
-    ChakraProps,
-    Collapse,
     Drawer,
     DrawerContent,
     DrawerOverlay,
     Flex,
     Icon,
     IconButton,
-    Input,
     Image,
-    InputGroup,
-    InputLeftElement,
-    OmitCommonProps,
     Text,
     useColorModeValue,
     useDisclosure,
     Button,
-    
+    BoxProps
 } from "@chakra-ui/react";
 import { AuthContext } from "../contexts/AuthContext";
-import { FaClipboardCheck, FaRss } from "react-icons/fa";
-import { AiFillGift } from "react-icons/ai";
-import { BsGearFill } from "react-icons/bs";
 import { FiMenu } from "react-icons/fi";
 import {  HiCollection } from "react-icons/hi";
-import { MdHome } from "react-icons/md";
 import logo from "../assets/logo.png";
 import { useNavigate, Link } from "react-router-dom";
 import { EditIcon, Search2Icon, TimeIcon } from "@chakra-ui/icons";
@@ -79,7 +69,7 @@ const Sidebar = (props: {children: React.ReactNode}) => {
       );
     };
   
-    const SidebarContent = (props: JSX.IntrinsicAttributes & OmitCommonProps<React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>, keyof ChakraProps> & ChakraProps & { as?: "div" | undefined; }) => (
+    const SidebarContent = (props: BoxProps) => (
       <Box
         as="nav"
         pos="fixed"
@@ -118,16 +108,15 @@ const Sidebar = (props: {children: React.ReactNode}) => {
         >
             {links.map((item) => {
                 return(
-                <NavItem icon={item.icon}>
-                    <Link to={item.link}>
-                        {item.name}
-                    </Link>
+                <NavItem icon={item.icon} onClick={() => navigate(item.link)}>
+                    {item.name}
                 </NavItem>
                 )
             })}
         </Flex>
       </Box>
     );
+
     return (
       <Box
         as="section"

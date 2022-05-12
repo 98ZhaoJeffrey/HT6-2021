@@ -225,11 +225,7 @@ const Dashboard = () => {
                 setIngredientLists(doc.data().lists);
             }
             else{
-                firebase
-                    .firestore()
-                    .collection("users")
-                    .doc(user!.uid)
-                    .set({favorites: [], history: [], lists: {"My first list" : []}});
+                ref.set({favorites: [], history: [], lists: {"My first list" : []}});
                 console.log("Initialize user");
                 setIngredientLists({"My first list" : []});
             }                

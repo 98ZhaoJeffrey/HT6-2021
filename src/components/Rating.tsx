@@ -25,15 +25,9 @@ import { StarIcon, TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import {AuthContext} from "../contexts/AuthContext";
 import firebase from "firebase";
 import { AiFillEdit } from "react-icons/ai";
-import { useParams } from "react-router-dom";
-
-
 
 type Liked = "Liked" | "Disliked" | "Neither"
 
-type RecipeID = {
-    id: string
-}
 
 interface Props{
     review: Review,
@@ -62,8 +56,6 @@ const Rating = (prop: Props) =>{
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [rating, setRating] = useState(prop.review.rating);
     const commentRef = useRef<HTMLTextAreaElement>(null);
-    const { id } = useParams<RecipeID>();
-    const ref = firebase.firestore().collection("reviews").doc(id as string);
 
     const updateComment = () => {
         if(commentRef && commentRef.current){

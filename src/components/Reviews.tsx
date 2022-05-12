@@ -20,7 +20,7 @@ type RecipeID = {
     id: string
 }
 
-const Reviews = () => {
+const Reviews = (props: {average: number, reviewCount: number}) => {
     const user = useContext(AuthContext);
     const [rating, setRating] = useState(0);
     const [reviews, setReviews] = useState<{ [key: string]: Review} >({});
@@ -145,6 +145,11 @@ const Reviews = () => {
     return(
         <VStack spacing='24px'>
             <Text fontSize='4xl' fontWeight={700}>Reviews</Text>
+            <Flex gap="1" alignItems="center">
+                <StarIcon color="green.500" fontSize="2xl"/> 
+                <Box as="span" fontWeight="bold" fontSize="2xl">{Math.round(props.average * 100) / 100}</Box>
+                <Box as="span" color="gray.600" fontWeight="bold" fontSize="2xl">({props.reviewCount} review(s))</Box>
+            </Flex>
             <FormControl>
                 <Textarea placeholder='Leave a review' ref={comment} disabled={false}/>
                 <Flex>
