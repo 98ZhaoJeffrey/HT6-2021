@@ -16,8 +16,8 @@ const RecipePreview = (props: Props) => {
     const ChakraLink = chakra(Link);
 
     return(
-        <Box maxW='sm'>
-            <AspectRatio maxW='sm' ratio={4 / 3}>
+        <Box>
+            <AspectRatio maxW='md' ratio={4 / 3}>
                 <Image 
                     src={props.image} 
                     alt={props.name}                         
@@ -33,7 +33,6 @@ const RecipePreview = (props: Props) => {
                     variant="outline" 
                     icon={<DeleteIcon/>}
                     aria-label="Remove"
-                    flexShrink="1"
                     onClick={props.remove}
                 />
             </Flex>

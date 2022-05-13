@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Box, Text, SimpleGrid } from "@chakra-ui/react";
+import { Box, Text, SimpleGrid, useColorModeValue } from "@chakra-ui/react";
 import { Page } from "../ts/interfaces";
 import firebase from "firebase";
 import { AuthContext } from "../contexts/AuthContext";
@@ -36,8 +36,8 @@ const History = () => {
     }
 
     return(
-        <Box>
-            <Text fontWeight="600">Recent History</Text>
+        <Box display="flex" flexDirection="column" bg={useColorModeValue("brand.light", "brand.dark")} h="92vh" alignItems="center">
+            <Text fontWeight="600" fontSize="4xl" mt="2rem">Recent History</Text>
             {history?.length === 0 ? <Text fontWeight="600">There is nothing here</Text>
                 : <SimpleGrid columns={4} spacing={10} p="2rem">
                     {history.map((item: Page) => { 

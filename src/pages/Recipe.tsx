@@ -25,6 +25,7 @@ import {
     IconButton,
     UnorderedList,
     ListItem,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import {Recipe, Ingredients, Page} from "../ts/interfaces";
@@ -162,7 +163,7 @@ const RecipePage = () => {
     }, [id]);
 
     return (
-        <Center w="100%">
+        <Center w="100%" bg={useColorModeValue("brand.light", "brand.dark")}>
             <Flex
                 w="80%"
                 direction={["column", null, "row"]}

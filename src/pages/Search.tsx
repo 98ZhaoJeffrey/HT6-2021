@@ -7,7 +7,8 @@ import {
     InputGroup,
     InputRightElement,
     Select,
-    Text
+    Text,
+    useColorModeValue
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import Pagination from "@choc-ui/paginator";
@@ -139,7 +140,7 @@ const Search = () => {
 
 
     return (
-        <Flex direction="column" alignItems={'center'} >
+        <Flex direction="column" alignItems={'center'} bg={useColorModeValue("brand.light", "brand.dark")} h="92vh">
             <InputGroup size="lg" width="80%" my="2rem">
                 <Input placeholder="Search" ref={searchRef}/>
                 <InputRightElement

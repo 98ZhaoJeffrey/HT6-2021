@@ -1,4 +1,4 @@
-import { Heading, Flex, Text, Image, Box} from "@chakra-ui/react";
+import { Heading, Flex, Text, Image, Box, useColorModeValue} from "@chakra-ui/react";
 import React from "react";
 import logo from "../assets/logo.png";
 import dottech from "../assets/dottech.png";
@@ -11,33 +11,31 @@ const Hero = () => {
             <Flex
             w={'full'}
             h={'75vh'}
+            
             backgroundImage={foodbackground}
             backgroundSize={'cover'}
             backgroundPosition={'center center'}>
-            <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" width="100%">
-                <Image src={logo} width="100px" height="100px"></Image>
-                <Heading size="4xl" color="#262626" ml="20px">
-                    FoodAdd
-                </Heading>
-                <Image src={dottech} height="54px"></Image>
-            </Box>
+                <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" width="100%">
+                    <Image src={logo} width="100px" height="100px"></Image>
+                    <Heading size="4xl" color="#262626" ml="20px">
+                        FoodAdd
+                    </Heading>
+                    <Image src={dottech} height="54px"></Image>
+                </Box>
             </Flex>
 
             <Flex
                 direction="column"
                 align="center"
-                maxW={{ xl: "1200px" }}
-                m="0 auto"
-                //{...props}
+                bg={useColorModeValue("brand.light", "brand.dark")}
             >
-                <Text as="span" fontSize="22px" color="grey" padding="50px">
-                    Use this website to{" "}
-                    <Text as="span" fontWeight="bold" color="black">
-                        manage
+                <Text as="span" fontSize="22px" color={useColorModeValue("brand.dark", "brand.light")} padding="50px">
+                    <Text as="span" fontWeight="bold" color={useColorModeValue("gray.700", "gray.400")}>
+                        Manage
                     </Text>{" "}
-                    your ingredients and{" "}
-                    <Text as="span" fontWeight="bold" color="black">
-                        follow
+                    your ingredients and get {" "}
+                    <Text as="span" fontWeight="bold" color={useColorModeValue("gray.700", "gray.400")}>
+                        recommended
                     </Text>{" "}
                     recipes!
                 </Text>

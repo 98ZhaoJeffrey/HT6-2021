@@ -62,26 +62,30 @@ const Reviews = (props: {average: number, reviewCount: number}) => {
 
     }
     
-    const updateReview = async (updatedReview: Review, reviewer: string) => {
+    const updateReview = async (updatedReview: Review, reviewer: string, updateComment: boolean) => {
         if(await checkProfanity(updatedReview.comment)){
             ref.update({reviews: {...reviews, [reviewer] : updatedReview}});
             setReviews(prevState => { return {...prevState, [reviewer] : updatedReview}});
-            toast({
-                title: 'Review updated!',
-                description: "Your review is now updated for everyone to see",
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            })
+            if(updateComment){
+                toast({
+                    title: 'Review updated!',
+                    description: "Your review is now updated for everyone to see",
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
         }
         else{
-            toast({
-                title: 'Please do not use profanity',
-                description: "Your review was not updated because there was profanity found",
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            })
+            if(updateComment){
+                toast({
+                    title: 'Please do not use profanity',
+                    description: "Your review was not updated because there was profanity found",
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
         }
 
     }

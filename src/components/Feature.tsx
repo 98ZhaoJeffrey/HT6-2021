@@ -7,16 +7,16 @@ import {
     Icon,
 } from "@chakra-ui/react";
 
-interface props{
+interface Props{
     color: string,
     title: string
     icon: React.ReactNode,
     children: React.ReactNode
 }
 
-const Feature = (props:props) => {
+const Feature = (props:Props) => {
     return (
-        <Box>
+        <Box p={4}>
             <Flex
                 alignItems="center"
                 justifyContent="center"
@@ -34,7 +34,7 @@ const Feature = (props:props) => {
                 )}
             >
                 <Icon
-                    boxSize={5}
+                    boxSize={{base: 15, xl: 5}}
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     aria-hidden="true"
@@ -51,7 +51,7 @@ const Feature = (props:props) => {
                 {props.title}
             </chakra.h3>
             <chakra.p
-                fontSize="sm"
+                fontSize={{base: "lg", xl: "md"}}
                 color={useColorModeValue("gray.500", "gray.400")}
             >
                 {props.children}

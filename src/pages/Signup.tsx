@@ -83,7 +83,7 @@ const SignUp = () => {
     return (
         <Flex
             direction={{ base: "column", md: "row" }}
-            bg='white'
+            bg={useColorModeValue("brand.light", "brand.dark")}
             px={{base: 0, xl: 16}}
             mx="auto"
             alignItems='center'
@@ -117,7 +117,7 @@ const SignUp = () => {
                 <Box
                     py={{ base: '0', sm: '8' }}
                     px={{ base: '4', sm: '10' }}
-                    bg={useBreakpointValue({ base: 'transparent', sm: 'bg-surface' })}
+                    bg={useBreakpointValue({ base: 'transparent', sm: useColorModeValue('md', 'gray.700') })}
                     boxShadow={{ base: 'none', sm: useColorModeValue('md', 'md-dark') }}
                     borderRadius={{ base: 'none', sm: 'xl' }}
                 >

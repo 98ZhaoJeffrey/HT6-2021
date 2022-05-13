@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Box, Text, SimpleGrid } from "@chakra-ui/react";
+import { Box, Text, SimpleGrid, useColorModeValue } from "@chakra-ui/react";
 import { Page } from "../ts/interfaces";
 import firebase from "firebase";
 import { AuthContext } from "../contexts/AuthContext";
@@ -36,8 +36,8 @@ const Collection = () => {
     }
 
     return(
-        <Box>
-            <Text fontWeight="600">Your favorite recipes</Text>
+        <Box display="flex" flexDirection="column" bg={useColorModeValue("brand.light", "brand.dark")} h="92vh" alignItems="center">
+            <Text fontWeight="600" fontSize="4xl" mt="2rem">Your favorite recipes</Text>
             {favorites?.length === 0 ? <Text fontWeight="600">There is nothing here</Text>
                 : <SimpleGrid columns={4} spacing={10} p="2rem">
                     {favorites.map((item: Page) => { 

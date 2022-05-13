@@ -32,7 +32,7 @@ type Liked = "Liked" | "Disliked" | "Neither"
 interface Props{
     review: Review,
     userId: string
-    updateReview: (updatedReview: Review, reviewer: string) => void
+    updateReview: (updatedReview: Review, reviewer: string, updateComment: boolean) => void
     deleteReview: () => void 
 }
 
@@ -69,7 +69,7 @@ const Rating = (prop: Props) =>{
                     dislikes: prop.review.dislikes,
                     rating: rating
                 };
-                prop.updateReview(review, prop.review.userId);    
+                prop.updateReview(review, prop.review.userId, true);    
             }
             onClose();
         }
@@ -118,7 +118,7 @@ const Rating = (prop: Props) =>{
             dislikes: Array.from(dislikes),
             rating: prop.review.rating
         };
-        prop.updateReview(review, prop.review.userId);
+        prop.updateReview(review, prop.review.userId, false);
     }
 
     return(

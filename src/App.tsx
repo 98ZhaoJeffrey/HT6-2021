@@ -16,15 +16,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import { PrivateRouteProps } from "./ts/interfaces";
 import {AuthProvider} from "./contexts/AuthContext";
 import { IngredientsListProvider } from "./contexts/IngredientsListContext";
-import { StepsStyleConfig as Steps } from 'chakra-ui-steps';
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import Sidebar from "./components/Sidebar";
-
-const theme = extendTheme({
-    components: {
-      Steps,
-    },
-  });
+import theme from "./utils/theme";
   
 
 const App = () => {

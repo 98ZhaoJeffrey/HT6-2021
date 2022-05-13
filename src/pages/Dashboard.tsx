@@ -28,7 +28,8 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList
+    MenuList,
+    useColorModeValue
 } from "@chakra-ui/react";
 import firebase from "../firebase";
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -235,13 +236,14 @@ const Dashboard = () => {
 
     return (
         <Box
+            bg={useColorModeValue("brand.light", "brand.dark")}
             width="100%"
             display="flex"
             flexDirection="column"
-            justifyContent="center"
             alignItems="center"
-            my="2rem"
+            py="2rem"
             px="5vw"
+            h="92vh"
         >
             <Grid templateColumns="1fr 2fr" gap={10}>
                 <Box
@@ -270,7 +272,7 @@ const Dashboard = () => {
                     isFitted
                     variant='enclosed'
                     index={currentTab}
-                    onChange={(index) => setCurrentTab(index)}
+                    onChange={(index: number) => setCurrentTab(index)}
                 >
                     <TabList>
                         <Tab>Add ingredient</Tab>
@@ -287,12 +289,12 @@ const Dashboard = () => {
                                 <Input
                                     placeholder="e.g tomato"
                                     value={newIngredient}
-                                    onChange={(e) => setNewIngredient(e.target.value)}
+                                    onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setNewIngredient(e.target.value)}
                                 />
                                 <Select
                                     placeholder="Select Unit"
                                     value={newUnit}
-                                    onChange={(e) => setNewUnit(e.target.value as Unit)}
+                                    onChange={(e: { target: { value: string; }; }) => setNewUnit(e.target.value as Unit)}
                                 >
                                     {units.map((unit) => {
                                         return <option value={unit}>{unit}</option>
@@ -313,12 +315,12 @@ const Dashboard = () => {
                                 <Input
                                     placeholder="Name of new list"
                                     value={newList}
-                                    onChange={(e) => setNewList(e.target.value)}
+                                    onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setNewList(e.target.value)}
                                 />
                                 <Select
                                     placeholder="Select your list"
                                     value={currentList}
-                                    onChange={(e) => setCurrentList(e.target.value)}
+                                    onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setCurrentList(e.target.value)}
                                 >
                                     {Object.keys(ingredientLists).map((listName)=>{
                                         return <option value={listName}>{listName}</option>
@@ -386,7 +388,6 @@ const Dashboard = () => {
                     })}
                 </Tbody>
                 <Tfoot >
-
                     <Button 
                         mt="2rem" 
                         colorScheme={'red'} 

@@ -13,14 +13,16 @@ import {
     useColorModeValue,
     useDisclosure,
     Button,
-    BoxProps
+    BoxProps,
+    useColorMode,
+    Spacer
 } from "@chakra-ui/react";
 import { AuthContext } from "../contexts/AuthContext";
 import { FiMenu } from "react-icons/fi";
 import {  HiCollection } from "react-icons/hi";
 import logo from "../assets/logo.png";
 import { useNavigate, Link } from "react-router-dom";
-import { EditIcon, Search2Icon, TimeIcon } from "@chakra-ui/icons";
+import { EditIcon, MoonIcon, Search2Icon, SunIcon, TimeIcon } from "@chakra-ui/icons";
 
 const links = [
     {"link": "/dashboard", "name": "Dashboard", "icon": EditIcon},
@@ -34,6 +36,7 @@ const Sidebar = (props: {children: React.ReactNode}) => {
     const user = useContext(AuthContext);
     const navigate = useNavigate();
     const color = useColorModeValue("gray.600", "gray.300");
+    const { colorMode, toggleColorMode } = useColorMode();
   
     const NavItem = (props: { [x: string]: any; icon: any; children: any; }) => {
       const { icon, children, ...rest } = props;
@@ -147,6 +150,13 @@ const Sidebar = (props: {children: React.ReactNode}) => {
             borderBottomWidth="1px"
             borderColor={useColorModeValue("inherit", "gray.700")}
           >
+            <IconButton 
+              onClick={toggleColorMode}
+              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+              aria-label="Dark mode"
+              mr="2"
+              variant="outline"
+            />
             <IconButton
               aria-label="Menu"
               display={{ base: "inline-flex", md: "none" }}
@@ -169,7 +179,6 @@ const Sidebar = (props: {children: React.ReactNode}) => {
                     Sign in
                 </Button>
             )}
-
           </Flex>
           {props.children}
         </Box>
