@@ -1,18 +1,19 @@
 import React, {useState, createContext, ReactNode, useEffect } from "react";
-import firebase from "../firebase";
+import { auth } from "../firebase";
+import { User } from "firebase/auth";
 
 
-export const AuthContext = createContext<firebase.User | null>(null);
+export const AuthContext = createContext<User | null>(null);
 
 const parseUser = (user: string | null) => {
     return (user === null) ? null : JSON.parse(user);
 }
 
 export const AuthProvider = ({children} : {children : ReactNode}) => {
-    const [currentUser, setCurrentUser] = useState<firebase.User | null>(parseUser(localStorage.getItem("user")));
+    const [currentUser, setCurrentUser] = useState<User | null>(parseUser(localStorage.getItem("user")));
 
     useEffect(() => {
-        const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
             setCurrentUser(user)
             localStorage.setItem("user", JSON.stringify(user));
             console.log(currentUser)

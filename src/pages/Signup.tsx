@@ -15,13 +15,14 @@ import {
     useColorModeValue,
     Divider,
 } from '@chakra-ui/react'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, {useState, useRef} from 'react'
 import logo from "../assets/logo.png";
 import { PasswordField } from '../components/PasswordField';
 import Carousels from '../components/Carousels';
-import firebase from 'firebase';
 import {FcGoogle} from "react-icons/fc";
+import { firebase, auth } from '../firebase';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
   
 const SignUp = () => {
 
@@ -29,6 +30,7 @@ const SignUp = () => {
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const images = [
         "https://images.pexels.com/photos/2599537/pexels-photo-2599537.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
@@ -51,15 +53,14 @@ const SignUp = () => {
         }
         else{
             try{
-                const response = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                console.log(response.user)
-                await response.user?.updateProfile({
-                    displayName: name,
-                });
+                const response = await createUserWithEmailAndPassword(auth, email, password);
+                if(auth.currentUser){
+                   updateProfile(auth.currentUser, {displayName: name}); 
+                }
+                console.log(response)
             }
             catch(error: any) {
                 setError(error.message);
-                console.log(error);
                 if(passwordRef && passwordRef.current){
                     passwordRef.current.value = '';
                 }
@@ -68,10 +69,10 @@ const SignUp = () => {
     }
 
     const GoogleSignIn = async () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
         try{
-            await firebase.auth().signInWithPopup(provider)
-            window.location.href = "/dashboard";
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+            navigate("/dashboard");
         }catch(error: any){
             console.log(error.code);
             console.log(error.message);

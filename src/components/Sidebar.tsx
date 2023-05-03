@@ -168,7 +168,7 @@ const Sidebar = (props: {children: React.ReactNode}) => {
                 <Link to="/dashboard">
                     <Avatar
                         name="name"
-                        src={user.photoURL!}
+                        src={"user.photoURL"}
                     />
                 </Link>
                 ) : (

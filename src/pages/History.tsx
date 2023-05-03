@@ -1,22 +1,24 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Box, Text, SimpleGrid, useColorModeValue } from "@chakra-ui/react";
 import { Page } from "../ts/interfaces";
-import firebase from "firebase";
+import {firebase, firestore} from "../firebase";
 import { AuthContext } from "../contexts/AuthContext";
 import RecipePreview from "../components/RecipePreview";
+import { doc, getDoc, setDoc, addDoc } from "firebase/firestore";
 
 const History = () => {
     const user = useContext(AuthContext);
     const [history, setHistory] = useState<Page[]>([]);
-    const ref = firebase.firestore().collection("users").doc(user!.uid);
+    const ref = doc(firestore, "users", user!.uid);
+
 
     useEffect(() => {
-        ref.get().then((doc: firebase.firestore.DocumentData) => {
-            if(doc.exists){
+        getDoc(ref).then((doc) => {
+            if(doc.exists()){
                 setHistory(doc.data().history);
             }
             else{
-                ref.set({favorites: [], history: [], lists: {"My first list" : []}});
+                setDoc(ref, {favorites: [], history: [], lists: {"My first list" : []}});
             }  
         })
     }, [])
@@ -24,13 +26,13 @@ const History = () => {
     useEffect(() => console.log(history), [history])
 
     const deleteItem = (id: string) => {
-        ref.get().then((doc: firebase.firestore.DocumentData) => {
-            if(doc.exists){
-                ref.set({...doc.data(), history: history.filter((item: Page) => item.id !== id)});
+        getDoc(ref).then((doc) => {
+            if(doc.exists()){
+                setDoc(ref, {...doc.data(), history: history.filter((item: Page) => item.id !== id)});
                 setHistory(history.filter((item: Page) => item.id !== id));
             }
             else{
-                ref.set({favorites: [], history: [], lists: {"My first list" : []}});
+                setDoc(ref, {favorites: [], history: [], lists: {"My first list" : []}});
             }  
         })   
     }

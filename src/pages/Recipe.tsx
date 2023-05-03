@@ -32,10 +32,11 @@ import {Recipe, Ingredients, Page} from "../ts/interfaces";
 import {Unit} from "../ts/types"
 import { useIngredientsListContext } from "../contexts/IngredientsListContext";
 import Reviews from "../components/Reviews";
-import firebase from "firebase";
+import { firebase, firestore } from "../firebase";
 import {AuthContext} from "../contexts/AuthContext";
 import { InfoIcon } from "@chakra-ui/icons";
 import VSteps from "../components/VSteps";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 //i have no idea why we need this to work
 type RecipeID = {
@@ -59,7 +60,10 @@ const RecipePage = () => {
     const [favorites, setFavorites] = useState<Page[]>([]);
     const { id } = useParams<RecipeID>() as { id: string };
     const navigate = useNavigate();
-    const ref = firebase.firestore().collection("users").doc(user!.uid);
+    const ref = doc(firestore, "users", user!.uid);
+    const recipeRef = doc(firestore, "recipe", id); 
+
+
     
     const hasEnoughIngredient = (searchIngredient: Ingredients): EnoughIngredient => {
         const found = ingredients.find(ingredient => searchIngredient.name.toLowerCase() === ingredient.name.toLowerCase());
@@ -82,15 +86,15 @@ const RecipePage = () => {
             return userIngredient;
         });
         
-        ref.get().then((doc: firebase.firestore.DocumentData) => {
-            if (doc.exists) {
+        getDoc(ref).then((doc) => {
+            if (doc.exists()) {
                 const history: Page[] = doc.data().history;
                 if(history.length === 10){
                     history.pop();    
                 }
                 history.unshift({id: recipeData["id"], name: recipeData["name"], image: recipeData["image"]});
                 console.log(history)
-                ref.update({...doc.data, lists: {...doc.data().lists, currentList: updatedIngredients}, history: history});
+                updateDoc(ref, {...doc.data, lists: {...doc.data().lists, currentList: updatedIngredients}, history: history});
                 setIngredients(updatedIngredients); 
             }
         });
@@ -99,21 +103,21 @@ const RecipePage = () => {
 
     const saveRecipe = () => {
         const page = {id: recipeData["id"], name: recipeData["name"], image: recipeData["image"]};        
-        ref.get().then((doc: firebase.firestore.DocumentData) => {
-            if (doc.exists) {
+        getDoc(ref).then((doc) => {
+            if (doc.exists()) {
                 if(favorites.filter((element: Page) => { return element.id === recipeData["id"]}).length === 0){
                     console.log(doc.data());
                     console.log({...doc.data(), favorites: [page, ...favorites]});
-                    ref.set({favorites: [page, ...favorites]}, {merge: true});
+                    setDoc(ref, {favorites: [page, ...favorites]}, {merge: true});
                     setFavorites(prev => [page, ...prev]);            
                 }
                 else{
-                    ref.set({favorites: favorites.filter((element: Page) => { return element.id !== page.id})}, {merge: true});
+                    setDoc(ref, {favorites: favorites.filter((element: Page) => { return element.id !== page.id})}, {merge: true});
                     setFavorites(favorites.filter((element: Page) => { return element.id !== page.id}));
                 } 
             }
             else{
-                ref.set({favorites: [page], history: [page], lists: {"My first list" : []}});
+                setDoc(ref, {favorites: [page], history: [page], lists: {"My first list" : []}});
             }
         }).catch((error) =>{
             console.log(error)
@@ -123,33 +127,34 @@ const RecipePage = () => {
     useEffect(() => {
         const getRecipe = async () => {
             try{
-                firebase.database().ref(`/recipe/${id}`).on('value', (snapshot) => {
-                    const recipe = snapshot.val();
-                    console.log(recipe);
-                    if(recipe != null){
-                        setRecipeData({
-                            "id": id,
-                            "name": recipe["name"],
-                            "description": recipe["description"],
-                            "image": recipe["image"],
-                            "steps": recipe["steps"],
-                            "time": recipe["time"],
-                            "ingredients": recipe["ingredients"].map((ingredient: Ingredients) => {
-                                return{
-                                    "name": ingredient["name"],
-                                    "amount": ingredient["amount"],
-                                    "unit": ingredient["unit"] as Unit
-                                }
-                            }),
-                            "average": recipe["average"],
-                            "reviewCount": recipe["reviewCount"]
-                        });
-                    }
-                })
-                const doc = await ref.get();
-                const data = doc.data();
-                if (data) {
-                    setFavorites(data.favorites);
+                const recipe = await getDoc(recipeRef);
+                if(recipe.exists()){
+                    const data = recipe.data();
+                    console.log(data)
+                     
+                    //setRecipeData({
+                    //    "id": id,
+                    //    "name": data.get("name"),
+                    //    "description": recipe["description"],
+                    //    "image": recipe["image"],
+                    //    "steps": recipe["steps"],
+                    //    "time": recipe["time"],
+                    //    "ingredients": recipe["ingredients"].map((ingredient: Ingredients) => {
+                    //        return{
+                    //            "name": ingredient["name"],
+                    //            "amount": ingredient["amount"],
+                    //            "unit": ingredient["unit"] as Unit
+                    //        }
+                    //    }),
+                    //    "average": recipe["average"],
+                    //    "reviewCount": recipe["reviewCount"]
+                    //});
+                    
+                }
+
+                const doc = await getDoc(ref);
+                if (doc.exists()) {
+                    setFavorites(doc.data().favorites);
                 }
                 console.log(ingredients)
             }catch (error) {

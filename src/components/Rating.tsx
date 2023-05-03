@@ -23,8 +23,10 @@ import {
 } from "@chakra-ui/react";
 import { StarIcon, TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import {AuthContext} from "../contexts/AuthContext";
-import firebase from "firebase";
+import { firebase, firestore } from "../firebase";
+import { User } from "firebase/auth";
 import { AiFillEdit } from "react-icons/ai";
+import { Timestamp } from "firebase/firestore";
 
 type Liked = "Liked" | "Disliked" | "Neither"
 
@@ -36,7 +38,7 @@ interface Props{
     deleteReview: () => void 
 }
 
-const UserLiked = (likes: string[], dislikes: string[], user: firebase.User | null): Liked =>{
+const UserLiked = (likes: string[], dislikes: string[], user: User | null): Liked =>{
     if(user === null){
         return "Neither";
     }
@@ -64,7 +66,7 @@ const Rating = (prop: Props) =>{
                     user: prop.review.user,
                     userId: prop.review.userId,
                     comment: commentRef.current.value,
-                    date: firebase.firestore.Timestamp.fromDate(new Date()),
+                    date: Timestamp.fromDate(new Date()),
                     likes: prop.review.likes,
                     dislikes: prop.review.dislikes,
                     rating: rating

@@ -17,8 +17,9 @@ import FoodResult from "../components/FoodResult";
 import { useIngredientsListContext } from "../contexts/IngredientsListContext";
 import {Recipe, Ingredients} from "../ts/interfaces";
 import {Unit} from "../ts/types"
-import firebase from "firebase";
+import {firebase, firestore} from "../firebase";
 import {AuthContext} from "../contexts/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
 
 const Loading = () => {
     return (
@@ -41,7 +42,7 @@ const Search = () => {
     const [numResults, setNumResults] = useState(10);
     const [order, setOrder] = useState<string>("Matched ingredients");
     const [searchParams, setSearchParams] = useSearchParams();
-    const ref = firebase.firestore().collection("users").doc(user!.uid);
+    const ref = doc(firestore, "users", user!.uid);
 
     const searchRef = useRef<HTMLInputElement>(null);
 
@@ -114,18 +115,9 @@ const Search = () => {
     }, [ingredients, order, searchParams]);
 
     useEffect(() => {
-        ref.get().then((doc: firebase.firestore.DocumentData) => {
-            if (doc.exists) {       
+        getDoc(ref).then((doc) => {
+            if (doc.exists()) {       
                 setIngredientLists(doc.data().lists);
-            }
-            else{
-                firebase
-                    .firestore()
-                    .collection("users")
-                    .doc(user!.uid)
-                    .set({favorites: [], history: [], lists: {"My first list" : []}});
-                console.log("Initialize user");
-                setIngredientLists({"My first list" : []});
             }
             console.log(currentList)     
         });
@@ -175,7 +167,7 @@ const Search = () => {
             {currentList === "" ? 
                 <Text>Please select a list before continuing</Text> : 
                 loading ? <Loading /> : 
-                recipes !== [] ? recipes.map((recipe: Recipe) => {return(<FoodResult {...recipe}/>)}) : 
+                recipes.length !== 0 ? recipes.map((recipe: Recipe) => {return(<FoodResult {...recipe}/>)}) : 
                 <Text> We couldn't find anything, try adding ingredients or changing your query</Text>
             }
             {recipes?.length !== 0 &&

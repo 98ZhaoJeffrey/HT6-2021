@@ -2,7 +2,6 @@ import React from "react";
 import {
     chakra,
     Box,
-    SimpleGrid,
     useColorModeValue,
     Flex,
 } from "@chakra-ui/react";

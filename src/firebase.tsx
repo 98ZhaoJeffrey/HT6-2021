@@ -1,6 +1,7 @@
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth"; 
+import { getFirestore } from "firebase/firestore";
+ 
 
 const firebaseConfig = {
   apiKey: "AIzaSyAZ9PTtI0X_vP17nMaIa-K2kJm8uaEQ-KM",
@@ -12,6 +13,8 @@ const firebaseConfig = {
   measurementId: "G-YCLPFQNRH5",
   databaseURL: "https://foodaddtech-default-rtdb.firebaseio.com/"
 };
-firebase.initializeApp(firebaseConfig);
 
-export default firebase;
+export const firebase = initializeApp(firebaseConfig);
+export const auth = getAuth(firebase);
+export const firestore = getFirestore(firebase);
+

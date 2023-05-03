@@ -13,7 +13,8 @@ import {
 import { StarIcon } from "@chakra-ui/icons";
 import {AuthContext} from "../contexts/AuthContext";
 import Rating from "./Rating";
-import firebase from "firebase";
+import { firebase, firestore } from "../firebase";
+import { doc, updateDoc, DocumentData, Timestamp, setDoc, getDoc } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 
 type RecipeID = {
@@ -27,19 +28,20 @@ const Reviews = (props: {average: number, reviewCount: number}) => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const toast = useToast();
     const { id } = useParams<RecipeID>();
-    const ref = firebase.firestore().collection("reviews").doc(id);
+    const ref = doc(firestore, "reviews", id as string);
     const comment = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
-        ref.get().then((doc: firebase.firestore.DocumentData) => {
-            if(doc.exists){
+        getDoc(ref).then(doc => {
+            if(doc.exists()){
                 setReviews(doc.data().reviews);
             }
             else{
-                ref.set({'reviews': reviews});
+                setDoc(ref, {'reviews': reviews});
             }
         })
-    });
+
+    }, []);
 
     const checkProfanity = async (review: String) => {
         const body = JSON.stringify({
@@ -64,7 +66,7 @@ const Reviews = (props: {average: number, reviewCount: number}) => {
     
     const updateReview = async (updatedReview: Review, reviewer: string, updateComment: boolean) => {
         if(await checkProfanity(updatedReview.comment)){
-            ref.update({reviews: {...reviews, [reviewer] : updatedReview}});
+            updateDoc(ref, {reviews: {...reviews, [reviewer] : updatedReview}});
             setReviews(prevState => { return {...prevState, [reviewer] : updatedReview}});
             if(updateComment){
                 toast({
@@ -92,33 +94,33 @@ const Reviews = (props: {average: number, reviewCount: number}) => {
 
     const deleteReview = () => {
         delete reviews[user!.uid];
-        ref.update({reviews: {...reviews}});
+        updateDoc(ref, {reviews: {...reviews}});
         setReviews(prevState => { return {...prevState}});
     }
 
     const submitRating = async () => {
         setIsSubmitting(true);
         try{
-            const doc = await ref.get();
+            const doc = await getDoc(ref)
             if(comment && comment.current){
                 // do a filter check here before we save to db
                 if(await checkProfanity(comment.current.value)){
                     const review: Review = {
-                        user: user!.displayName!,
+                        user: "user!.displayName",
                         userId: user!.uid,
                         comment: comment.current.value,
-                        date: firebase.firestore.Timestamp.fromDate(new Date()),
+                        date: Timestamp.fromDate(new Date()),
                         likes: [user!.uid],
                         dislikes: [],
                         rating: rating
                     };
-                    if(doc.exists){
+                    if(doc.exists()){
                         reviews[user!.uid] = review;
-                        ref.update({reviews: reviews});
+                        updateDoc(ref, {reviews: reviews});
                         setReviews(prevState => { return {...prevState, [user!.uid] : review}});
                     }else if(user && user.uid){
                         setReviews({[user.uid]: review});
-                        ref.set({'reviews': reviews});
+                        setDoc(ref, {'reviews': reviews});
                     }
                     toast({
                         title: 'Review posted!',

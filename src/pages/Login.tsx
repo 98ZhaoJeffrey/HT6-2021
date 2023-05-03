@@ -21,7 +21,8 @@ import { PasswordField } from '../components/PasswordField';
 import Carousels from '../components/Carousels';
 import logo from "../assets/logo.png";
 import {FcGoogle} from "react-icons/fc";
-import firebase from 'firebase';
+import { firebase, auth } from '../firebase';
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 
 const Login = () => {
 
@@ -39,9 +40,9 @@ const Login = () => {
   const navigate = useNavigate();
   
   const GoogleSignIn = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
     try{
-        await firebase.auth().signInWithPopup(provider)
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
         navigate("/dashboard");
     }catch(error: any){
         console.log(error.code);
@@ -59,8 +60,9 @@ const Login = () => {
     }
     else{
       try{
-        const response = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const response = await signInWithEmailAndPassword(auth, email, password);
         console.log(response.user)
+        navigate('/dashboard');
       }
       catch(error: any) {
         setError(error.message);
