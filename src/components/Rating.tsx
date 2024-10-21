@@ -127,19 +127,23 @@ const Rating = (prop: Props) =>{
         <>
             <Box w="100%">
                 <Divider/>
-                <Text fontSize='3xl' fontWeight="600" color={prop.review.userId === user!.uid ? "green" : "black"}>{prop.review.user}</Text>
-                <Text fontSize='xl' fontWeight="400">Last Updated: {prop.review.date.toDate().toDateString()}</Text>
-                <Flex alignItems={'center'} height="50">
-                    <Text fontSize='lg'>Rating:</Text>
-                    {Array(5)
-                    .fill("")
-                    .map((_, i) => (
-                        <StarIcon
-                        key={i}
-                        color={i < prop.review.rating ? "green.500" : "gray.300"}
-                        w={6} h={6}
-                    />))}
+                <Flex>
+                    <Text fontSize='3xl' fontWeight="600">{prop.review.user}</Text>
+                    <Spacer />
+                    <Flex alignItems={'center'} height="50">
+                        <Text fontSize='lg'>Rating:</Text>
+                        {Array(5)
+                        .fill("")
+                        .map((_, i) => (
+                            <StarIcon
+                            key={i}
+                            color={i < prop.review.rating ? "green.500" : "gray.300"}
+                            w={6} h={6}
+                        />))}
+                    </Flex>
                 </Flex>
+                <Text fontSize='xl' fontWeight="400">Last Updated: {prop.review.date.toDate().toDateString()}</Text>
+
                 <Tooltip label="Click to shorten text">
                     <Text 
                         fontSize='xl' 

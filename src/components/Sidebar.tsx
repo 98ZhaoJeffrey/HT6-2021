@@ -15,20 +15,21 @@ import {
     Button,
     BoxProps,
     useColorMode,
-    Spacer
 } from "@chakra-ui/react";
 import { AuthContext } from "../contexts/AuthContext";
-import { FiMenu } from "react-icons/fi";
+import { FiMenu, FiUpload } from "react-icons/fi";
 import {  HiCollection } from "react-icons/hi";
 import logo from "../assets/logo.png";
 import { useNavigate, Link } from "react-router-dom";
 import { EditIcon, MoonIcon, Search2Icon, SunIcon, TimeIcon } from "@chakra-ui/icons";
+import * as PageRoutes from "../constants/routes";
 
 const links = [
-    {"link": "/dashboard", "name": "Dashboard", "icon": EditIcon},
-    {"link": "/search", "name": "Search", "icon": Search2Icon},
-    {"link": "/collection", "name": "Collection", "icon": HiCollection},
-    {"link": "/history", "name": "History", "icon": TimeIcon }
+    {"link": PageRoutes.DASHBOARD_PAGE, "name": "Dashboard", "icon": EditIcon},
+    {"link": PageRoutes.SEARCH_PAGE, "name": "Search", "icon": Search2Icon},
+    {"link": PageRoutes.UPLOAD_PAGE, "name": "Upload", "icon": FiUpload},
+    {"link": PageRoutes.COLLECTIONS_PAGE, "name": "Collection", "icon": HiCollection},
+    {"link": PageRoutes.HISTORY_PAGE, "name": "History", "icon": TimeIcon }
 ]
 
 const Sidebar = (props: {children: React.ReactNode}) => {
@@ -111,7 +112,7 @@ const Sidebar = (props: {children: React.ReactNode}) => {
         >
             {links.map((item) => {
                 return(
-                <NavItem icon={item.icon} onClick={() => navigate(item.link)}>
+                <NavItem key={item.name} icon={item.icon} onClick={() => navigate(item.link)}>
                     {item.name}
                 </NavItem>
                 )

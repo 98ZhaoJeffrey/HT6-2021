@@ -16,7 +16,6 @@ export const AuthProvider = ({children} : {children : ReactNode}) => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             setCurrentUser(user)
             localStorage.setItem("user", JSON.stringify(user));
-            console.log(currentUser)
         });
         return unsubscribe;
     });

@@ -48,8 +48,8 @@ import { useIngredientsListContext} from "../contexts/IngredientsListContext";
 import HistoryStack from "../utils/history";
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut } from "firebase/auth";
-
-const units: Unit[] = ["ea", "ml", "L", "oz", "pt", "qt", "gals", "lbs", "mg", "gram", "kg", "tsp", "tbsp", "c"]
+import { conversion } from "../utils/unitConversion";
+import units from "../constants/units";
 
 const Dashboard = () => {
     const user = useContext(AuthContext);
@@ -127,9 +127,22 @@ const Dashboard = () => {
         updateList(name, {amount: amount});
     };
 
-    const updateUnit = (name: string, unit: Unit) => {
-        // update changed ingredient to new amount    
-        updateList(name, {unit: unit});
+    const updateUnit = (name: string, amount: number, oldUnit: Unit, newUnit: Unit) => {
+        // update changed ingredient to new amount  
+        try{
+            const newAmount = conversion(amount, oldUnit, newUnit)
+            updateList(name, {amount: newAmount, unit: newUnit});
+        } catch (e){
+            if (e instanceof Error) {
+                toast({
+                    title: "Invalid conversion",
+                    description: e.message,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                })
+            }
+        }   
     }
 
     // add new ingredient created by user to dashboard and firebase
@@ -319,6 +332,8 @@ const Dashboard = () => {
     } 
 
     useEffect(() => {
+        if(!ingredients) return;
+        
         const updatedIngredients = updateWIthHistory(prevHistoryEntry, [...ingredients])
         const updatedIngredientLists = {...ingredientLists};                
         updatedIngredientLists[currentList] = updatedIngredients;
@@ -516,7 +531,7 @@ const Dashboard = () => {
                                                     </MenuButton>
                                                     <MenuList>
                                                         {units.map((unit)=>{
-                                                            return <MenuItem onClick={()=>{updateUnit(ingredient.name, unit)}}>{unit}</MenuItem>
+                                                            return <MenuItem onClick={()=>{updateUnit(ingredient.name, ingredient.amount, ingredient.unit, unit)}}>{unit}</MenuItem>
                                                         })}
                                                     </MenuList>
                                                 </Menu>

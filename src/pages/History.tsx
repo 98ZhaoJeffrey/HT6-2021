@@ -42,9 +42,10 @@ const History = () => {
             <Text fontWeight="600" fontSize="4xl" mt="2rem">Recent History</Text>
             {history?.length === 0 ? <Text fontWeight="600">There is nothing here</Text>
                 : <SimpleGrid columns={4} spacing={10} p="2rem">
-                    {history.map((item: Page) => { 
+                    {history.map((item: Page, index: number) => { 
                         return(
-                            <RecipePreview 
+                            <RecipePreview
+                                key={index} 
                                 {...item}
                                 remove={() => deleteItem(item.id)}
                             />

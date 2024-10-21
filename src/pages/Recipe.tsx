@@ -26,17 +26,31 @@ import {
     UnorderedList,
     ListItem,
     useColorModeValue,
+    Spacer,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
+    Tr,
+    SimpleGrid,
+    Thead,
+    Th,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import {Recipe, Ingredients, Page} from "../ts/interfaces";
 import {Unit} from "../ts/types"
 import { useIngredientsListContext } from "../contexts/IngredientsListContext";
 import Reviews from "../components/Reviews";
-import { firebase, firestore } from "../firebase";
+import { firestore } from "../firebase";
 import {AuthContext} from "../contexts/AuthContext";
-import { InfoIcon } from "@chakra-ui/icons";
-import VSteps from "../components/VSteps";
+import { ChevronDownIcon, InfoIcon } from "@chakra-ui/icons";
+import { RecipeSteps } from "../components/RecipeSteps";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { commonConversion, conversionsTo } from "../utils/unitConversion";
 
 //i have no idea why we need this to work
 type RecipeID = {
@@ -57,14 +71,14 @@ const RecipePage = () => {
     const [servings, setServings] = useState<number>(1);
     const [ingredients, setIngredients] = useIngredientsListContext()[0];
     const [recipeData, setRecipeData] = useState<Recipe>({} as Recipe);
+    const [recipeIngredients, setRecipeIngredients] = useState<Record<"metric" | "imperial" , Ingredients[]>>();
+    const [units, setUnits] = useState<"metric" | "imperial">("metric");
     const [favorites, setFavorites] = useState<Page[]>([]);
     const { id } = useParams<RecipeID>() as { id: string };
     const navigate = useNavigate();
     const ref = doc(firestore, "users", user!.uid);
-    const recipeRef = doc(firestore, "recipe", id); 
+    const recipeRef = doc(firestore, "recipes", id); 
 
-
-    
     const hasEnoughIngredient = (searchIngredient: Ingredients): EnoughIngredient => {
         const found = ingredients.find(ingredient => searchIngredient.name.toLowerCase() === ingredient.name.toLowerCase());
         if(found !== undefined){
@@ -93,7 +107,6 @@ const RecipePage = () => {
                     history.pop();    
                 }
                 history.unshift({id: recipeData["id"], name: recipeData["name"], image: recipeData["image"]});
-                console.log(history)
                 updateDoc(ref, {...doc.data, lists: {...doc.data().lists, currentList: updatedIngredients}, history: history});
                 setIngredients(updatedIngredients); 
             }
@@ -123,6 +136,14 @@ const RecipePage = () => {
             console.log(error)
         });
     };
+    
+    const swapUnits = () => {
+        if(units === "metric"){
+            setUnits("imperial");
+        }else{
+            setUnits("metric");
+        }
+    }
 
     useEffect(() => {
         const getRecipe = async () => {
@@ -131,32 +152,37 @@ const RecipePage = () => {
                 if(recipe.exists()){
                     const data = recipe.data();
                     console.log(data)
-                     
-                    //setRecipeData({
-                    //    "id": id,
-                    //    "name": data.get("name"),
-                    //    "description": recipe["description"],
-                    //    "image": recipe["image"],
-                    //    "steps": recipe["steps"],
-                    //    "time": recipe["time"],
-                    //    "ingredients": recipe["ingredients"].map((ingredient: Ingredients) => {
-                    //        return{
-                    //            "name": ingredient["name"],
-                    //            "amount": ingredient["amount"],
-                    //            "unit": ingredient["unit"] as Unit
-                    //        }
-                    //    }),
-                    //    "average": recipe["average"],
-                    //    "reviewCount": recipe["reviewCount"]
-                    //});
-                    
+                    const ingredients = data["ingredients"].map((ingredient: Ingredients) => {
+                        return{
+                            "name": ingredient["name"],
+                            "amount": ingredient["amount"],
+                            "unit": ingredient["unit"] as Unit
+                        }
+                    })
+                    setRecipeData({
+                       "id": id,
+                       "name": data["name"],
+                       "description": data["description"],
+                       "image": data["image"],
+                       "steps": data["steps"],
+                       "time": data["time"],
+                       "ingredients": ingredients,
+                       "average": data["average"],
+                       "reviewCount": data["reviewCount"]
+                    });
+                    setRecipeIngredients({
+                        "metric": ingredients,
+                        "imperial": ingredients.map((ingredient: Ingredients) => {
+                            const newValues = commonConversion(ingredient.amount, ingredient.unit);
+                            return {...newValues, "name": ingredient.name}; 
+                        })
+                    }); 
+                    console.log(ingredients)
                 }
-
                 const doc = await getDoc(ref);
                 if (doc.exists()) {
                     setFavorites(doc.data().favorites);
                 }
-                console.log(ingredients)
             }catch (error) {
                 console.log(error);
             }
@@ -165,38 +191,42 @@ const RecipePage = () => {
         if(ingredients === undefined){
             setIngredients([]);
         }
-    }, [id]);
+    }, []);
 
     return (
-        <Center w="100%" bg={useColorModeValue("brand.light", "brand.dark")}>
+        <Center w="100%" bg={useColorModeValue("brand.light", "brand.dark")} px="1rem">
             <Flex
-                w="80%"
+                w="100%"
                 direction={["column", null, "row"]}
                 justifyContent="space-around"
                 my="2rem"
             >
-                <Flex direction="column">
+                <Flex direction="column" alignItems={["center", null, "start"]}>
                     <Heading textAlign={["center", null, "left"]}>
                         {recipeData.name}
                     </Heading>
                     <Image
                         src={recipeData.image}
                         fallbackSrc="https://via.placeholder.com/150"
+                        alt={recipeData.name}
                         boxSize={{base: "80vw", md: "40vw", lg:"25vw"}}
                         borderRadius="5%"
-                        alignSelf="center"
                         objectFit="cover"
                         my="2rem"
                     />
+                    <Text fontSize="xl">
+                        {recipeData.description}
+                    </Text>
                     <Box >
-                        <Text fontSize="2xl">Ingredients</Text>
                         <Flex direction="row" my="1rem">
-                            <Text fontSize="xl" mr="1rem">
+                            <Text fontSize="2xl">Ingredients</Text>
+                            <Spacer/>
+                            <Text fontSize="2xl" mr="1rem">
                                 Servings
                             </Text>
                             <NumberInput
                                 min={1}
-                                w="20%"
+                                w="15%"
                                 value={servings}
                                 onChange={(value: string) => setServings(parseInt(value))}
                             >
@@ -226,23 +256,94 @@ const RecipePage = () => {
                             </PopoverContent>
                             </Popover>
                         </Flex>
-                        <Stack spacing={4} direction="column">
-                            {recipeData.ingredients && 
-                                recipeData.ingredients.map((ingredient) => (
-                                    <Checkbox
-                                        colorScheme={colors[hasEnoughIngredient(ingredient)]}
-                                        size="lg"
-                                        defaultIsChecked={hasEnoughIngredient(ingredient) !== "Does not have the ingredient"}
-                                    >
-                                        {ingredient.amount * servings}{" "}
-                                        {ingredient.unit} {ingredient.name}
-                                    </Checkbox>
-                                  ))
-                            }
-                        </Stack>
+                        <Flex direction="row" my="1rem" gap="1rem">
+                            <Button>
+                                Add to cart
+                            </Button>
+                            <Button onClick={swapUnits}>
+                                Switch units 
+                            </Button>
+                        </Flex>
+                        <TableContainer>
+                            <Table variant='simple'>
+                                <Thead>
+                                    <Tr>
+                                        <Th>Has Enough</Th>
+                                        <Th>Name</Th>
+                                        <Th isNumeric>Quantity</Th>
+                                        <Th>Unit</Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {recipeIngredients && 
+                                        recipeIngredients[units].map((ingredient, index) => (
+                                            <Tr>
+                                                <Td>
+                                                    <Checkbox
+                                                        colorScheme={colors[hasEnoughIngredient(ingredient)]}
+                                                        size="lg"
+                                                        defaultChecked={hasEnoughIngredient(ingredient) !== "Does not have the ingredient"}
+                                                        key={index}
+                                                    >  
+                                                    </Checkbox>
+                                                </Td>
+                                                <Td>
+                                                    {ingredient.name}
+                                                </Td>
+                                                <Td>
+                                                    {Math.round(100 * servings * ingredient.amount) / 100}
+                                                </Td>
+                                                <Td>
+                                                    <Menu>
+                                                        <MenuButton as={Button} colorScheme={'green'} rightIcon={<ChevronDownIcon />}>
+                                                            {ingredient.unit}
+                                                        </MenuButton>
+                                                        <MenuList>
+                                                            {conversionsTo(ingredient.unit).map((unit)=>{
+                                                                return <MenuItem>{unit}</MenuItem>
+                                                            })}
+                                                        </MenuList>
+                                                    </Menu>
+                                                    
+                                                </Td>
+                                            </Tr>
+                                        ))
+                                    }
+                                </Tbody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                    <Box mt="2rem" w="100%">
+                        <Text fontSize="2xl">Nutritional facts (per serving)</Text>
+                        <SimpleGrid columns={3} spacing={10} m="1rem">
+                            <Flex direction="column" justifyContent="center" alignItems="center">
+                                <Text as="b" fontSize='xl'>Cals</Text>
+                                <Text as="span">100</Text>
+                            </Flex>
+                            <Flex direction="column" justifyContent="center" alignItems="center">
+                                <Text as="b" fontSize='xl'>Proteins</Text>
+                                <Text as="span">20g</Text>
+                            </Flex>
+                            <Flex direction="column" justifyContent="center" alignItems="center">
+                                <Text as="b" fontSize='xl'>Fat</Text>
+                                <Text as="span">3g</Text>
+                            </Flex>
+                            <Flex direction="column" justifyContent="center" alignItems="center">
+                                <Text as="b" fontSize='xl'>Fiber</Text>
+                                <Text as="span">6g</Text>
+                            </Flex>
+                            <Flex direction="column" justifyContent="center" alignItems="center">
+                                <Text as="b" fontSize='xl'>Sugar</Text>
+                                <Text as="span">4g</Text>
+                            </Flex>
+                            <Flex direction="column" justifyContent="center" alignItems="center">
+                                <Text as="b" fontSize='xl'>Carbs</Text>
+                                <Text as="span">3g</Text>
+                            </Flex>
+                        </SimpleGrid>
                     </Box>
                 </Flex>
-                <Box w={["90%", null, "50%"]} mt={["2rem", null, "0"]}>
+                <Box w={["100%", null, "50%"]} mt={["2rem", null, "0"]}>
                     <Text fontSize="2xl" mb={"2rem"}>Instructions</Text>
                     <Stack
                         spacing={4}
@@ -251,14 +352,14 @@ const RecipePage = () => {
                     >
                         {
                             recipeData.steps &&
-                            <VSteps steps={recipeData.steps}>
+                            <RecipeSteps orientation="vertical" steps={recipeData.steps}>
                                 <Button onClick={madeRecipe}>
                                     I made this recipe!
                                 </Button>
                                 <Button colorScheme='green' onClick={saveRecipe}>
                                     {favorites.filter((element: Page) => { return element.id === recipeData["id"]}).length === 0 ? 'Save recipe' : 'Remove recipe'}
                                 </Button>
-                            </VSteps>
+                            </RecipeSteps>
                         }
                     </Stack>
                     <Reviews average={recipeData["average"]} reviewCount={recipeData["reviewCount"]}/>

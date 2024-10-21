@@ -19,50 +19,56 @@ import { IngredientsListProvider } from "./contexts/IngredientsListContext";
 import { ChakraProvider } from '@chakra-ui/react';
 import Sidebar from "./components/Sidebar";
 import theme from "./utils/theme";
+import * as PageRoutes from "./constants/routes";
+import Upload from "./pages/Upload";
   
 
 const App = () => {
 
     const defaultPrivateRouteProps: Omit<PrivateRouteProps, 'outlet'> = {
         authenticationPath: '/',
-      };
+    };
 
     return (
-    <ChakraProvider theme={theme}>
-        <AuthProvider>
-            <IngredientsListProvider>
-                <Router> 
-                    <Sidebar> 
-                        <Routes>    
-                            <Route path="/" element={<Home/>}/>
-                            <Route path="/login" element={<Login/>}/>
-                            <Route path="/signup" element={<SignUp/>}/>
-                            <Route 
-                                path='dashboard' 
-                                element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Dashboard />} />} 
-                            />
-                            <Route 
-                                path="/recipe/:id"
-                                element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<RecipePage />}/>} 
-                            />
-                            <Route 
-                                path="/search" 
-                                element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Search />}/>} 
-                            />
-                            <Route 
-                                path="/collection" 
-                                element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Collection />}/>} 
-                            />
-                            <Route 
-                                path="/history" 
-                                element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<History />}/>} 
-                            />
-                        </Routes>
-                    </Sidebar> 
-                </Router>
-            </IngredientsListProvider> 
-        </AuthProvider>
-    </ChakraProvider>
+        <ChakraProvider theme={theme}>
+            <AuthProvider>
+                <IngredientsListProvider>
+                    <Router> 
+                        <Sidebar> 
+                            <Routes>    
+                                <Route path={PageRoutes.LANDING_PAGE} element={<Home/>}/>
+                                <Route path={PageRoutes.LOGIN_PAGE} element={<Login/>}/>
+                                <Route path={PageRoutes.SIGNUP_PAGE} element={<SignUp/>}/>
+                                <Route 
+                                    path={PageRoutes.DASHBOARD_PAGE}
+                                    element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Dashboard />} />} 
+                                />
+                                <Route 
+                                    path={PageRoutes.RECIPE_PAGE}
+                                    element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<RecipePage />}/>} 
+                                />
+                                <Route 
+                                    path={PageRoutes.SEARCH_PAGE} 
+                                    element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Search />}/>} 
+                                />
+                                <Route 
+                                    path={PageRoutes.COLLECTIONS_PAGE}
+                                    element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Collection />}/>} 
+                                />
+                                <Route 
+                                    path={PageRoutes.HISTORY_PAGE}
+                                    element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<History />}/>} 
+                                />
+                                <Route 
+                                    path={PageRoutes.UPLOAD_PAGE}
+                                    element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Upload/>}/>} 
+                                />
+                            </Routes>
+                        </Sidebar> 
+                    </Router>
+                </IngredientsListProvider> 
+            </AuthProvider>
+        </ChakraProvider>
     );
 };
 

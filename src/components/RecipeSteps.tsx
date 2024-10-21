@@ -3,24 +3,24 @@ import { Step, Steps, useSteps } from "chakra-ui-steps"
 
 interface Props {
   steps: string[],
+  orientation: "vertical" | "horizontal" | undefined,
   children: React.ReactNode
 }
-const steps = [{ label: "Step 1" }, { label: "Step 2" }, { label: "Step 3" }]
 
-export const VSteps = (props: Props) => {
+export const RecipeSteps = (props: Props) => {
   const { nextStep, prevStep, reset, activeStep, setStep } = useSteps({
     initialStep: 0,
   })
   return (
     <>
-      <Steps orientation="vertical" activeStep={activeStep} onClickStep={(step) => setStep(step)}>
+      <Steps orientation={props.orientation} activeStep={activeStep} onClickStep={(step) => setStep(step)}>
         {props.steps.map((label , index) => (
           <Step width="100%" label={label} key={index}>
             <Box my={1}></Box>
           </Step>
         ))}
       </Steps>
-      {activeStep === steps.length ? (
+      {activeStep === props.steps.length ? (
         <Flex px={4} py={4} width="100%" flexDirection="column">
           <Heading fontSize="xl" textAlign="center">
             Woohoo! All steps completed!
@@ -45,7 +45,7 @@ export const VSteps = (props: Props) => {
             Prev
           </Button>
           <Button size="sm" onClick={nextStep} colorScheme='blue'>
-            {activeStep === steps.length - 1 ? "Finish" : "Next"}
+            {activeStep === props.steps.length - 1 ? "Finish" : "Next"}
           </Button>
         </Flex>
       )}
@@ -53,4 +53,4 @@ export const VSteps = (props: Props) => {
   )
 }
 
-export default VSteps
+export default RecipeSteps

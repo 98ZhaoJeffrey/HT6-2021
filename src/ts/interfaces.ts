@@ -5,7 +5,7 @@ import { Timestamp } from "firebase/firestore";
 export interface Ingredients {
     name: string,
     amount: number,
-    unit: Unit
+    unit: Unit,
 }
 
 export interface Recipe {
