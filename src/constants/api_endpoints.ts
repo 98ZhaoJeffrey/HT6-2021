@@ -1,0 +1,2 @@
+export const PROFANITY_ENDPOINT = "https://us-central1-foodaddtech.cloudfunctions.net/profanityCheck";
+export const FINDRECIPES_ENDPOINT = "https://us-central1-foodaddtech.cloudfunctions.net/findRecipes"

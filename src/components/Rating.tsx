@@ -27,9 +27,7 @@ import { firebase, firestore } from "../firebase";
 import { User } from "firebase/auth";
 import { AiFillEdit } from "react-icons/ai";
 import { Timestamp } from "firebase/firestore";
-
-type Liked = "Liked" | "Disliked" | "Neither"
-
+import { Liked } from "../ts/types";
 
 interface Props{
     review: Review,

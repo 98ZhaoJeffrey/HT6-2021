@@ -8,3 +8,5 @@ export enum HistoryAction {
     NEW
 }
 
+export type Liked = "Liked" | "Disliked" | "Neither"
+

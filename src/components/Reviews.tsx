@@ -14,8 +14,9 @@ import { StarIcon } from "@chakra-ui/icons";
 import {AuthContext} from "../contexts/AuthContext";
 import Rating from "./Rating";
 import { firebase, firestore } from "../firebase";
-import { doc, updateDoc, DocumentData, Timestamp, setDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, Timestamp, setDoc, getDoc } from "firebase/firestore";
 import { useParams } from "react-router-dom";
+import checkProfanity from "../utils/checkProfanity";
 
 type RecipeID = {
     id: string
@@ -36,33 +37,9 @@ const Reviews = (props: {average: number, reviewCount: number}) => {
             if(doc.exists()){
                 setReviews(doc.data().reviews);
             }
-            else{
-                setDoc(ref, {'reviews': reviews});
-            }
         })
-
     }, []);
 
-    const checkProfanity = async (review: String) => {
-        const body = JSON.stringify({
-            "review": review
-        });
-
-        const options = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: body,
-        };
-        try{
-            const response = await fetch('https://us-central1-foodaddtech.cloudfunctions.net/cleanReview', options);
-
-            const result = await response.json();
-            return !result["response"];
-        }catch (error){
-            console.log(error);
-        }
-
-    }
     
     const updateReview = async (updatedReview: Review, reviewer: string, updateComment: boolean) => {
         if(await checkProfanity(updatedReview.comment)){

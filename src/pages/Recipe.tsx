@@ -32,13 +32,12 @@ import {
     Tbody,
     Td,
     Tr,
-    SimpleGrid,
     Thead,
     Th,
     Menu,
     MenuButton,
     MenuItem,
-    MenuList
+    MenuList,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import {Recipe, Ingredients, Page} from "../ts/interfaces";
@@ -51,6 +50,9 @@ import { ChevronDownIcon, InfoIcon } from "@chakra-ui/icons";
 import { RecipeSteps } from "../components/RecipeSteps";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { commonConversion, conversionsTo } from "../utils/unitConversion";
+import * as PageRoutes from "../constants/routes";
+import { formatTimeString, formatTime } from "../utils/formatTime";
+import CookingTime from "../components/CookingTime";
 
 //i have no idea why we need this to work
 type RecipeID = {
@@ -111,7 +113,7 @@ const RecipePage = () => {
                 setIngredients(updatedIngredients); 
             }
         });
-        navigate('/dashboard');   
+        navigate(PageRoutes.DASHBOARD_PAGE);
     };
 
     const saveRecipe = () => {
@@ -119,8 +121,6 @@ const RecipePage = () => {
         getDoc(ref).then((doc) => {
             if (doc.exists()) {
                 if(favorites.filter((element: Page) => { return element.id === recipeData["id"]}).length === 0){
-                    console.log(doc.data());
-                    console.log({...doc.data(), favorites: [page, ...favorites]});
                     setDoc(ref, {favorites: [page, ...favorites]}, {merge: true});
                     setFavorites(prev => [page, ...prev]);            
                 }
@@ -128,9 +128,6 @@ const RecipePage = () => {
                     setDoc(ref, {favorites: favorites.filter((element: Page) => { return element.id !== page.id})}, {merge: true});
                     setFavorites(favorites.filter((element: Page) => { return element.id !== page.id}));
                 } 
-            }
-            else{
-                setDoc(ref, {favorites: [page], history: [page], lists: {"My first list" : []}});
             }
         }).catch((error) =>{
             console.log(error)
@@ -177,7 +174,6 @@ const RecipePage = () => {
                             return {...newValues, "name": ingredient.name}; 
                         })
                     }); 
-                    console.log(ingredients)
                 }
                 const doc = await getDoc(ref);
                 if (doc.exists()) {
@@ -212,8 +208,15 @@ const RecipePage = () => {
                         boxSize={{base: "80vw", md: "40vw", lg:"25vw"}}
                         borderRadius="5%"
                         objectFit="cover"
-                        my="2rem"
+                        my="1rem"
                     />
+                    <Flex my={2} direction="row" gap="2rem">
+                        <CookingTime time={recipeData.time}/>
+                        <Button colorScheme='green' onClick={saveRecipe}>
+                            { favorites.find((element: Page) => element.id === recipeData["id"]) ? 'Remove recipe' : 'Save recipe' }
+                        </Button>
+                    </Flex>
+                    
                     <Text fontSize="xl">
                         {recipeData.description}
                     </Text>
@@ -313,7 +316,7 @@ const RecipePage = () => {
                             </Table>
                         </TableContainer>
                     </Box>
-                    <Box mt="2rem" w="100%">
+                    {/* <Box mt="2rem" w="100%">
                         <Text fontSize="2xl">Nutritional facts (per serving)</Text>
                         <SimpleGrid columns={3} spacing={10} m="1rem">
                             <Flex direction="column" justifyContent="center" alignItems="center">
@@ -341,7 +344,7 @@ const RecipePage = () => {
                                 <Text as="span">3g</Text>
                             </Flex>
                         </SimpleGrid>
-                    </Box>
+                    </Box> */}
                 </Flex>
                 <Box w={["100%", null, "50%"]} mt={["2rem", null, "0"]}>
                     <Text fontSize="2xl" mb={"2rem"}>Instructions</Text>
@@ -355,9 +358,6 @@ const RecipePage = () => {
                             <RecipeSteps orientation="vertical" steps={recipeData.steps}>
                                 <Button onClick={madeRecipe}>
                                     I made this recipe!
-                                </Button>
-                                <Button colorScheme='green' onClick={saveRecipe}>
-                                    {favorites.filter((element: Page) => { return element.id === recipeData["id"]}).length === 0 ? 'Save recipe' : 'Remove recipe'}
                                 </Button>
                             </RecipeSteps>
                         }

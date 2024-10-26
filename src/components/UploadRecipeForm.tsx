@@ -5,7 +5,7 @@ import ImageForm from './forms/UploadRecipeImageForm';
 import StepsForm from './forms/UploadRecipeStepsForm';
 import IngredientsForm from './forms/UploadRecipeIngredientsForm';
 import { Ingredients } from '../ts/interfaces';
-import { addDoc, collection, doc } from 'firebase/firestore';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import { firestore, storage } from '../firebase';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { generateImageId } from '../utils/generateImageId';
@@ -17,7 +17,8 @@ interface FormData {
     description: string;
     steps: string[];
     ingredients: Ingredients[];
-    duration: { hours: number, minutes: number },
+    hours: number, 
+    minutes: number
 }
 
 
@@ -35,7 +36,8 @@ const UploadRecipeForm = () => {
         description: '',
         steps: [''],
         ingredients: [],
-        duration: { hours: 0, minutes: 0 },
+        hours: 0, 
+        minutes: 0
       });
 
     const handleNext = () => setCurrentStep((prev) => prev + 1);
@@ -50,7 +52,6 @@ const UploadRecipeForm = () => {
         const recipeImageRef = ref(storage, `image/${generateImageId()}`);
         await uploadString(recipeImageRef, formData.image, 'data_url')
         const downloadURL = await getDownloadURL(recipeImageRef);
-        
         const docRef = await addDoc(recipeRef, {
           name: formData.title,
           description: formData.description,
@@ -59,9 +60,12 @@ const UploadRecipeForm = () => {
           reviewCount: 0,
           ingredients: formData.ingredients,
           steps: formData.steps,
-          time: 3600 * formData.duration.hours + 60 * formData.duration.minutes,
-          author: user!.uid
+          time: 3600 * formData.hours + 60 * formData.minutes,
+          author: user!.uid,
         });
+        const newReviewsRef = doc(firestore, "reviews", docRef.id);
+        await setDoc(newReviewsRef, {'reviews': []});
+        
         navigate(`/recipe/${docRef.id}`);
       } catch (e) {
           toast({
@@ -72,9 +76,6 @@ const UploadRecipeForm = () => {
             isClosable: true,
           })
       }
-
-      // redirect
-
     }
 
     const renderStep = () => {

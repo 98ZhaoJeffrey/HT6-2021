@@ -28,7 +28,7 @@ const links = [
     {"link": PageRoutes.DASHBOARD_PAGE, "name": "Dashboard", "icon": EditIcon},
     {"link": PageRoutes.SEARCH_PAGE, "name": "Search", "icon": Search2Icon},
     {"link": PageRoutes.UPLOAD_PAGE, "name": "Upload", "icon": FiUpload},
-    {"link": PageRoutes.COLLECTIONS_PAGE, "name": "Collection", "icon": HiCollection},
+    {"link": PageRoutes.FAVORITE_PAGE, "name": "Favorites", "icon": HiCollection},
     {"link": PageRoutes.HISTORY_PAGE, "name": "History", "icon": TimeIcon }
 ]
 
@@ -166,16 +166,16 @@ const Sidebar = (props: {children: React.ReactNode}) => {
               size="sm"
             />
             {user ? (
-                <Link to="/dashboard">
+                <Link to={PageRoutes.DASHBOARD_PAGE}>
                     <Avatar
                         name="name"
-                        src={"user.photoURL"}
+                        src={user.photoURL!}
                     />
                 </Link>
                 ) : (
                 <Button
                     variant="ghost"
-                    onClick={() => {navigate("/login");}}
+                    onClick={() => {navigate(PageRoutes.LOGIN_PAGE);}}
                 >
                     Sign in
                 </Button>

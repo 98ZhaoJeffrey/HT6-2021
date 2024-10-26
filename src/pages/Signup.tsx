@@ -23,6 +23,7 @@ import Carousels from '../components/Carousels';
 import {FcGoogle} from "react-icons/fc";
 import { firebase, auth } from '../firebase';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
+import * as PageRoutes from "../constants/routes";
   
 const SignUp = () => {
 
@@ -60,7 +61,7 @@ const SignUp = () => {
                 console.log(response)
             }
             catch(error: any) {
-                setError(error.message);
+                setError("Unable to signup at this time, please try again");
                 if(passwordRef && passwordRef.current){
                     passwordRef.current.value = '';
                 }
@@ -72,7 +73,7 @@ const SignUp = () => {
         try{
             const provider = new GoogleAuthProvider();
             await signInWithPopup(auth, provider);
-            navigate("/dashboard");
+            navigate(PageRoutes.DASHBOARD_PAGE);
         }catch(error: any){
             console.log(error.code);
             console.log(error.message);

@@ -23,6 +23,7 @@ import logo from "../assets/logo.png";
 import {FcGoogle} from "react-icons/fc";
 import { firebase, auth } from '../firebase';
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import * as PageRoutes from "../constants/routes";
 
 const Login = () => {
 
@@ -43,7 +44,7 @@ const Login = () => {
     try{
         const provider = new GoogleAuthProvider();
         await signInWithPopup(auth, provider);
-        navigate("/dashboard");
+        navigate(PageRoutes.DASHBOARD_PAGE);
     }catch(error: any){
         console.log(error.code);
         console.log(error.message);
@@ -60,13 +61,11 @@ const Login = () => {
     }
     else{
       try{
-        const response = await signInWithEmailAndPassword(auth, email, password);
-        console.log(response.user)
-        navigate('/dashboard');
+        await signInWithEmailAndPassword(auth, email, password);
+        navigate(PageRoutes.DASHBOARD_PAGE);
       }
       catch(error: any) {
-        setError(error.message);
-        console.log(error);
+        setError("Unable to login at this time, please try again");
         if(passwordRef && passwordRef.current){
           passwordRef.current.value = '';
         }

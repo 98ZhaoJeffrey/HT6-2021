@@ -174,7 +174,7 @@ function commonConversion(amount: number, from: Unit) {
             to = from;
             break;
     }
-    return {"unit": to, "amount": conversion(amount, to, from)};
+    return {"unit": to, "amount": conversion(amount, from, to)};
 }
 
 function conversionsTo (unit: Unit) {

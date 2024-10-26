@@ -10,8 +10,7 @@ import Search from "./pages/Search";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/Signup";
-import History from "./pages/History";
-import Collection from "./pages/Collection";
+import History from "./pages/recipeCollections/History";
 import PrivateRoute from "./components/PrivateRoute";
 import { PrivateRouteProps } from "./ts/interfaces";
 import {AuthProvider} from "./contexts/AuthContext";
@@ -21,6 +20,7 @@ import Sidebar from "./components/Sidebar";
 import theme from "./utils/theme";
 import * as PageRoutes from "./constants/routes";
 import Upload from "./pages/Upload";
+import Favorite from "./pages/recipeCollections/Favorite";
   
 
 const App = () => {
@@ -52,8 +52,8 @@ const App = () => {
                                     element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Search />}/>} 
                                 />
                                 <Route 
-                                    path={PageRoutes.COLLECTIONS_PAGE}
-                                    element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Collection />}/>} 
+                                    path={PageRoutes.FAVORITE_PAGE}
+                                    element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Favorite />}/>} 
                                 />
                                 <Route 
                                     path={PageRoutes.HISTORY_PAGE}
