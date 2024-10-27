@@ -51,7 +51,7 @@ const FoodResult = (props: Recipe) => {
                 <Text
                     mt={4}
                     color={useColorModeValue("gray.600", "gray.400")}
-                    noOfLines={4}
+                   noOfLines={2}
                 >
                     {props.description}
                 </Text>

@@ -37,10 +37,10 @@ export const findRecipes = functions.https.onRequest(
         }
 
         // Parse the limit (default to 10 if invalid or not provided)
-        let limit = 10;
+        let limit = 5;
         if (typeof req.query.limit === "string") {
           const num = parseInt(req.query.limit, 10);
-          limit = isNaN(num) || num <= 0 ? 10 : num;
+          limit = isNaN(num) || num <= 0 ? 5 : num;
         }
 
         logger.info(`Doing recipe search with limit ${limit} and page number ${pageNumber}`);

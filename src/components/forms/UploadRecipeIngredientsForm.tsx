@@ -52,7 +52,6 @@ const IngredientsForm: FC<IngredientsFormProps> = ({ formData, handleChange }) =
         display="flex"
         flexDirection="row"
         justifyContent="space-evenly"
-        height="100%"
       >
           <Input
               placeholder="e.g tomato"
@@ -83,58 +82,71 @@ const IngredientsForm: FC<IngredientsFormProps> = ({ formData, handleChange }) =
           </Button>
       </Box>
 
-      <Table>
-        <Thead>
+      <Box maxH="60vh" overflowY="auto" w="100%">
+        <Table variant="simple" size="sm" w="100%">
+          <Thead position="sticky" top={0} zIndex={1}>
             <Tr>
-            <Th>Food Name</Th>
-            <Th>Quantity</Th>
-            <Th isNumeric>Action</Th>
+              <Th>Food Name</Th>
+              <Th>Quantity</Th>
+              <Th isNumeric>Action</Th>
             </Tr>
-        </Thead>
-        <Tbody>
-            {formData.ingredients && formData.ingredients.map((ingredient) =>{
-                return(
-                    <Tr>
-                      <Td>
-                          {ingredient.name}
-                      </Td>
-                      <Td>                        
-                          <InputGroup>
-                              <Input
-                                  value={ingredient.amount}
-                                  name={ingredient.name}
-                                  type="number"
-                                  onChange={(e) =>
-                                    updateIngredientAmount(
-                                      ingredient.name,
-                                      parseFloat(e.target.value)
-                                    )
-                                  }
-                              >
-                              </Input>
-                              <InputRightAddon children={ingredient.unit} />
-                          </InputGroup>
-                      </Td>
-                      <Td isNumeric>
-                          <ButtonGroup>
-                              <Menu>
-                                  <MenuButton as={Button} colorScheme={'green'} rightIcon={<ChevronDownIcon />}>
-                                      Switch Unit
-                                  </MenuButton>
-                                  <MenuList>
-                                      {units.map((unit)=>{
-                                          return <MenuItem onClick={()=>{updateUnit(ingredient.name, unit)}}>{unit}</MenuItem>
-                                      })}
-                                  </MenuList>
-                              </Menu>
-                              <Button colorScheme={'red'} onClick={() => {deleteIngredient(ingredient.name)}} rightIcon={<DeleteIcon/>}>Delete</Button>
-                          </ButtonGroup>
-                      </Td>
-                  </Tr>
-                )
-            })}
-        </Tbody>
-    </Table>
+          </Thead>
+
+          <Tbody>
+            {formData.ingredients?.map((ingredient) => (
+              <Tr key={ingredient.name}>
+                <Td>{ingredient.name}</Td>
+                <Td>
+                  <InputGroup>
+                    <Input
+                      value={ingredient.amount}
+                      name={ingredient.name}
+                      type="number"
+                      onChange={(e) =>
+                        updateIngredientAmount(
+                          ingredient.name,
+                          parseFloat(e.target.value)
+                        )
+                      }
+                    />
+                    <InputRightAddon children={ingredient.unit} />
+                  </InputGroup>
+                </Td>
+                <Td isNumeric>
+                  <ButtonGroup>
+                    <Menu>
+                      <MenuButton
+                        as={Button}
+                        colorScheme="green"
+                        rightIcon={<ChevronDownIcon />}
+                      >
+                        Switch Unit
+                      </MenuButton>
+                      <MenuList>
+                        {units.map((unit) => (
+                          <MenuItem
+                            key={unit}
+                            onClick={() => updateUnit(ingredient.name, unit)}
+                          >
+                            {unit}
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </Menu>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => deleteIngredient(ingredient.name)}
+                      rightIcon={<DeleteIcon />}
+                    >
+                      Delete
+                    </Button>
+                  </ButtonGroup>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
     </Stack>
   );
 };

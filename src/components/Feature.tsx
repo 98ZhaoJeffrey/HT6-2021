@@ -10,7 +10,7 @@ import {
 interface Props{
     color: string,
     title: string
-    icon: React.ReactNode,
+    icon: React.ElementType,
     children: React.ReactNode
 }
 
@@ -38,9 +38,8 @@ const Feature = (props:Props) => {
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     aria-hidden="true"
-                >
-                    {props.icon}
-                </Icon>
+                    as={props.icon}
+                />
             </Flex>
             <chakra.h3
                 mb={2}

@@ -148,7 +148,6 @@ const RecipePage = () => {
                 const recipe = await getDoc(recipeRef);
                 if(recipe.exists()){
                     const data = recipe.data();
-                    console.log(data)
                     const ingredients = data["ingredients"].map((ingredient: Ingredients) => {
                         return{
                             "name": ingredient["name"],
@@ -197,7 +196,7 @@ const RecipePage = () => {
                 justifyContent="space-around"
                 my="2rem"
             >
-                <Flex direction="column" alignItems={["center", null, "start"]}>
+                <Flex direction="column" width="40%" alignItems={["center", null, "start"]}>
                     <Heading textAlign={["center", null, "left"]}>
                         {recipeData.name}
                     </Heading>
@@ -217,7 +216,7 @@ const RecipePage = () => {
                         </Button>
                     </Flex>
                     
-                    <Text fontSize="xl">
+                    <Text fontSize="xl" maxW="80%" isTruncated noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                         {recipeData.description}
                     </Text>
                     <Box >

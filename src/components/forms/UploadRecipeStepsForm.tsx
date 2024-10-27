@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text, Stack, Button, Heading, HStack, Textarea, Flex } from '@chakra-ui/react';
+import { Text, Stack, Button, Heading, HStack, Textarea, Flex, Box } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 
 interface StepsFormProps {
@@ -24,20 +24,22 @@ const StepsForm: FC<StepsFormProps> = ({ formData, handleChange }) => {
   return (
     <Stack spacing={4} w={"100%"}>
       <Heading size="md">Step 2: Add Steps</Heading>
-      {formData.steps.map((step, index) => (
-        <HStack key={index} spacing={2}>
-          <Flex direction={"column"} width="90%">
-            <Text>{`Step ${index + 1}`}</Text>
-            <Textarea
-              value={step}
-              onChange={(e) => handleStepChange(index, e.target.value)}
-              resize="vertical"
-              size="sm"
-            />
-          </Flex>
-          <Button colorScheme={'red'} onClick={() => removeStep(index)} rightIcon={<DeleteIcon/>}>Delete</Button>
-        </HStack>
-      ))}
+      <Box maxH="60vh" overflowY="auto">
+        {formData.steps.map((step, index) => (
+          <HStack key={index} spacing={2} >
+            <Flex direction={"column"} width="90%" >
+              <Text>{`Step ${index + 1}`}</Text>
+              <Textarea
+                value={step}
+                onChange={(e) => handleStepChange(index, e.target.value)}
+                resize="vertical"
+                size="sm"
+              />
+            </Flex>
+            <Button colorScheme={'red'} onClick={() => removeStep(index)} rightIcon={<DeleteIcon/>}>Delete</Button>
+          </HStack>
+        ))}
+      </Box>
       <Button onClick={addStep} disabled={formData.steps.filter((step) => step === '').length > 0}>
         Add another step
       </Button>

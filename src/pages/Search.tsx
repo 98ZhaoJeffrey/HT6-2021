@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef, Suspense, lazy} from "react";
+import React, { useState, useEffect, useContext, useRef, lazy} from "react";
 import { 
     Flex,
     IconButton,
@@ -17,20 +17,24 @@ import { useSearchParams } from "react-router-dom";
 import { useIngredientsListContext } from "../contexts/IngredientsListContext";
 import {Recipe, Ingredients} from "../ts/interfaces";
 import {firebase, firestore} from "../firebase";
+import FoodResult from "../components/FoodResult";
 import {AuthContext} from "../contexts/AuthContext";
 import { doc, getDoc } from "firebase/firestore";
 import { parseNumber } from "../utils/parseValues";
 import { findRecipes } from "../utils/findRecipes";
 import { Loading } from "../components/Loading";
 
-const FoodResult = lazy(() => import("../components/FoodResult"));
 
-const RenderRecipeContent = ({ currentList, recipes }: { currentList: string; recipes: Recipe[]}) => {
+
+const RenderRecipeContent = ({ currentList, recipes, isLoading }: { currentList: string; recipes: Recipe[], isLoading: boolean}) => {
     const renderContent = () => {
-      if (currentList === "") {
-        return <Text>Please select a list before continuing</Text>;
-      }
-      return renderRecipes();
+        if (currentList === "") {
+            return <Text>Please select a list before continuing</Text>;
+        }
+        if(isLoading) {
+            return <Loading message="Finding you the freshest recipes!" />
+        }
+        return renderRecipes();
     };
   
     const renderRecipes = () => (
@@ -57,9 +61,10 @@ const Search = () => {
     const [ingredientLists, setIngredientLists] = useState<{ [key: string]: Ingredients[]} >({});
 
     const [recipes, setRecipes] = useState<Recipe[]>([]);
-    const [numResults, setNumResults] = useState(10);
+    const [numResults, setNumResults] = useState(0);
     const [order, setOrder] = useState<string>("Matched ingredients");
     const [searchParams, setSearchParams] = useSearchParams();
+    const [isLoading, setIsLoading] = useState(false);
 
     const searchRef = useRef<HTMLInputElement>(null);
 
@@ -68,14 +73,17 @@ const Search = () => {
     useEffect(()=>{
         const getData = async () => {
             try {
+                setIsLoading(true)
                 const results = await findRecipes(order, ingredients, searchParams); 
                 setRecipes(results.recipes)
                 setNumResults(results["numberResults"])
+                setIsLoading(false)
             } catch (error){
                 console.log(error)
             }
         }
         const timeoutId = setTimeout(() => getData(), 2000);
+        
         return () => clearTimeout(timeoutId);
     }, [ingredients, order, searchParams]);
 
@@ -108,10 +116,13 @@ const Search = () => {
                     />                    
                 </InputGroup>
                 <Flex direction="row" gap='2' mb="10">
-                    <Select onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {
-                        setOrder(e.target.value)
-                    }}>
-                        <option selected value="Matched Ingredients">Matched ingredients </option>
+                    <Select
+                        defaultValue={"Alphabetical Order"} 
+                        onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {
+                            setOrder(e.target.value)
+                        }}
+                    >
+                        <option value="Matched Ingredients">Matched ingredients </option>
                         <option value="Alphabetical Order">Alphabetical order</option>
                         <option value="Top Rated">Top rated</option>
                         <option value="Cooking Time">Cooking time</option>
@@ -126,10 +137,7 @@ const Search = () => {
                     </Select>
                 </Flex>
             </Stack>
-                    
-            <Suspense fallback={<Loading message="Finding you the freshest recipes!" />}>
-                { RenderRecipeContent({currentList, recipes}) }
-            </Suspense>
+            { RenderRecipeContent({currentList, recipes, isLoading}) }     
             {recipes?.length !== 0 &&
                 <Flex
                     w="full"
@@ -145,6 +153,7 @@ const Search = () => {
                         }}
                         total={numResults}
                         paginationProps={{ display: "flex" }}
+                        pageSize={5}
                         pageNeighbours={2}
                         size={"md"}
                         baseStyles={{ bg: "green.300" }}

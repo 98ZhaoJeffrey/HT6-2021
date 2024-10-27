@@ -160,12 +160,14 @@ const Reviews = (props: {average: number, reviewCount: number}) => {
                     {Object.keys(reviews).includes(user!.uid) ? "You have already submitted a review" : "Submit review"}
                 </Button>
             </FormControl>
-            {Object.keys(reviews).length === 0 ? 
-                <Text fontSize='xl' fontWeight={'600'}> 
-                There are no reviews yet... You could be the first one! 
-                </Text> : Object.entries(reviews).sort((a, b) => { return b[1]['date'].seconds - a[1]['date'].seconds}).map(
-                    (data) => {return <Rating review={data[1]} userId={data[0]} updateReview={updateReview} deleteReview={deleteReview}/>})
+            <Box maxHeight="30vh" overflowY="auto">
+                {Object.keys(reviews).length === 0 ? 
+                    <Text fontSize='xl' fontWeight={'600'}> 
+                    There are no reviews yet... You could be the first one! 
+                    </Text> : Object.entries(reviews).sort((a, b) => { return b[1]['date'].seconds - a[1]['date'].seconds}).map(
+                        (data) => {return <Rating review={data[1]} userId={data[0]} updateReview={updateReview} deleteReview={deleteReview}/>})
                 }
+            </Box>
         </VStack>
     );
 };

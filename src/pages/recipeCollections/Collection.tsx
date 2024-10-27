@@ -38,7 +38,7 @@ const Collection = (props: DataCollectionProps) => {
         <Box display="flex" flexDirection="column" bg={useColorModeValue("brand.light", "brand.dark")} h="92vh" alignItems="center">
             <Text fontWeight="600" fontSize="4xl" mt="2rem">Your favorite recipes</Text>
             {data?.length === 0 ? <Text fontWeight="600">There is nothing here</Text>
-                : <SimpleGrid columns={4} spacing={10} p="2rem">
+                : <SimpleGrid columns={4} spacing={10} p="2rem" w="100%">
                     {data.map((item: Page, index: number) => { 
                         return(
                             <RecipePreview 

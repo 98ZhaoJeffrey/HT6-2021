@@ -21,6 +21,7 @@ import theme from "./utils/theme";
 import * as PageRoutes from "./constants/routes";
 import Upload from "./pages/Upload";
 import Favorite from "./pages/recipeCollections/Favorite";
+import NotFound from "./pages/NotFound";
   
 
 const App = () => {
@@ -62,6 +63,10 @@ const App = () => {
                                 <Route 
                                     path={PageRoutes.UPLOAD_PAGE}
                                     element={<PrivateRoute {...defaultPrivateRouteProps} outlet={<Upload/>}/>} 
+                                />
+                                <Route
+                                    path="*"
+                                    element={<NotFound/>}
                                 />
                             </Routes>
                         </Sidebar> 

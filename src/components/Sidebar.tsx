@@ -17,20 +17,12 @@ import {
     useColorMode,
 } from "@chakra-ui/react";
 import { AuthContext } from "../contexts/AuthContext";
-import { FiMenu, FiUpload } from "react-icons/fi";
-import {  HiCollection } from "react-icons/hi";
+import { FiMenu} from "react-icons/fi";
 import logo from "../assets/logo.png";
 import { useNavigate, Link } from "react-router-dom";
-import { EditIcon, MoonIcon, Search2Icon, SunIcon, TimeIcon } from "@chakra-ui/icons";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import * as PageRoutes from "../constants/routes";
-
-const links = [
-    {"link": PageRoutes.DASHBOARD_PAGE, "name": "Dashboard", "icon": EditIcon},
-    {"link": PageRoutes.SEARCH_PAGE, "name": "Search", "icon": Search2Icon},
-    {"link": PageRoutes.UPLOAD_PAGE, "name": "Upload", "icon": FiUpload},
-    {"link": PageRoutes.FAVORITE_PAGE, "name": "Favorites", "icon": HiCollection},
-    {"link": PageRoutes.HISTORY_PAGE, "name": "History", "icon": TimeIcon }
-]
+import { AUTH_LINKS, UNAUTH_LINKS } from "../constants/sidebar_links";
 
 const Sidebar = (props: {children: React.ReactNode}) => {
     const sidebar = useDisclosure();
@@ -110,7 +102,7 @@ const Sidebar = (props: {children: React.ReactNode}) => {
           color="gray.600"
           aria-label="Main Navigation"
         >
-            {links.map((item) => {
+            { (user ? AUTH_LINKS : UNAUTH_LINKS).map((item) => {
                 return(
                 <NavItem key={item.name} icon={item.icon} onClick={() => navigate(item.link)}>
                     {item.name}
@@ -177,7 +169,7 @@ const Sidebar = (props: {children: React.ReactNode}) => {
                     variant="ghost"
                     onClick={() => {navigate(PageRoutes.LOGIN_PAGE);}}
                 >
-                    Sign in
+                    Login
                 </Button>
             )}
           </Flex>

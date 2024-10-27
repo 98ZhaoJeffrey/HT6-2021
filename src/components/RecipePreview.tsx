@@ -17,13 +17,14 @@ const RecipePreview = (props: Props) => {
 
     return(
         <Box>
-            <AspectRatio maxW='md' ratio={4 / 3}>
+            <AspectRatio maxW='lg' ratio={4 / 3}>
                 <Image 
                     src={props.image} 
-                    alt={props.name}                         
+                    alt={props.name} 
+                    borderRadius="5%"                       
                     alignSelf="center"
                     objectFit="cover"
-                    boxSize='lg'
+                    boxSize='xg'
                 />
             </AspectRatio>
             <Flex mt="1rem" flexDirection="row" gap="1" justifyContent="space-between">

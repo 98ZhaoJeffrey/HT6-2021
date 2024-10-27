@@ -1,4 +1,4 @@
-import { Flex, Heading, Button, Box, ButtonGroup, Spacer } from "@chakra-ui/react"
+import { Flex, Heading, Button, Text, ButtonGroup, Spacer, HStack } from "@chakra-ui/react"
 import { Step, Steps, useSteps } from "chakra-ui-steps"
 
 interface Props {
@@ -13,11 +13,19 @@ export const RecipeSteps = (props: Props) => {
   })
   return (
     <>
-      <Steps orientation={props.orientation} activeStep={activeStep} onClickStep={(step) => setStep(step)}>
-        {props.steps.map((label , index) => (
-          <Step width="100%" label={label} key={index}>
-            <Box my={1}></Box>
-          </Step>
+      <Steps orientation={props.orientation} activeStep={activeStep} variant={"simple"} onClickStep={(step) => setStep(step)}>
+        {props.steps.map((text, index) => (
+            <Step key={index}>
+              <Text 
+                whiteSpace="normal" 
+                wordBreak="break-word" 
+                overflowWrap="break-word"
+                textAlign="left"
+              >
+                {text}
+              </Text>
+            </Step>
+
         ))}
       </Steps>
       {activeStep === props.steps.length ? (
