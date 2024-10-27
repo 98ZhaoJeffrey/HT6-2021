@@ -83,7 +83,7 @@ const Reviews = (props: {average: number, reviewCount: number}) => {
                 // do a filter check here before we save to db
                 if(await checkProfanity(comment.current.value)){
                     const review: Review = {
-                        user: "user!.displayName",
+                        user: user!.displayName!,
                         userId: user!.uid,
                         comment: comment.current.value,
                         date: Timestamp.fromDate(new Date()),
