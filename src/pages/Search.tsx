@@ -23,6 +23,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { parseNumber } from "../utils/parseValues";
 import { findRecipes } from "../utils/findRecipes";
 import { Loading } from "../components/Loading";
+import { SearchType } from "../ts/types";
 
 
 
@@ -62,7 +63,7 @@ const Search = () => {
 
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [numResults, setNumResults] = useState(0);
-    const [order, setOrder] = useState<string>("Matched ingredients");
+    const [order, setOrder] = useState<SearchType>(SearchType.ALPHA);
     const [searchParams, setSearchParams] = useSearchParams();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -119,10 +120,10 @@ const Search = () => {
                     <Select
                         defaultValue={"Alphabetical Order"} 
                         onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {
-                            setOrder(e.target.value)
+                            setOrder(e.target.value as SearchType)
                         }}
                     >
-                        <option value="Matched Ingredients">Matched ingredients </option>
+                        <option value="Matching Ingredients">Matching ingredients </option>
                         <option value="Alphabetical Order">Alphabetical order</option>
                         <option value="Top Rated">Top rated</option>
                         <option value="Cooking Time">Cooking time</option>

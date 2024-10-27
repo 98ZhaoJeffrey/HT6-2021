@@ -494,91 +494,93 @@ const Dashboard = () => {
             </Grid>
             {currentList !== "" && 
                 <>
-                <Text fontSize="3rem" fontWeight="600" mt="2rem">List: {currentList}</Text>
-                    <Table>
-                        <Thead>
-                            <Tr>
-                            <Th>Food Name</Th>
-                            <Th>Quantity</Th>
-                            <Th isNumeric>Action</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {ingredients && ingredients.map((ingredient) =>{
-                                return(
-                                    <Tr>
-                                        <Td>
-                                            {ingredient.name}
-                                        </Td>
-                                        <Td>                        
-                                            <InputGroup>
-                                                <Input
-                                                    value={ingredient.amount}
-                                                    name={ingredient.name}
-                                                    type="number"
-                                                    onChange={handleChange}
-                                                >
-                                                </Input>
-                                                <InputRightAddon children={ingredient.unit} />
-                                            </InputGroup>
-                                        </Td>
-                                        <Td isNumeric>
-                                            <ButtonGroup>
-                                                <Menu>
-                                                    <MenuButton as={Button} colorScheme={'green'} rightIcon={<ChevronDownIcon />}>
-                                                        Switch Unit
-                                                    </MenuButton>
-                                                    <MenuList>
-                                                        {units.map((unit)=>{
-                                                            return <MenuItem onClick={()=>{updateUnit(ingredient.name, ingredient.amount, ingredient.unit, unit)}}>{unit}</MenuItem>
-                                                        })}
-                                                    </MenuList>
-                                                </Menu>
-                                                <Button colorScheme={'red'} onClick={() => {deleteIngredient(ingredient.name)}} rightIcon={<DeleteIcon/>}>Delete</Button>
-                                            </ButtonGroup>
-                                        </Td>
-                                    </Tr>
-                                )
-                            })}
-                        </Tbody>
-                        <Tfoot >
-                            <ButtonGroup spacing='3' mt="2rem">
-                                <Button 
-                                    colorScheme={'green'} 
-                                    onClick={() => saveList()} 
-                                    rightIcon={<EditIcon/>}
-                                    variant='outline'
-                                >
-                                    Save
-                                </Button>
-                                <Button 
-                                    colorScheme={'red'} 
-                                    onClick={onOpen} 
-                                    rightIcon={<DeleteIcon/>}
-                                    variant='outline'
-                                >
-                                    Delete list
-                                </ Button>
-                                <IconButton aria-label='Undo' icon={<MdUndo />} disabled={history.historyEmpty()} onClick={() => 
-                                    {   
-                                        const undo = history.undo();
-                                        if(undo){
-                                            setPrevHistoryEntry({action: undo.action, name: undo.name, prev: undo.prev, undo: true});
-                                        }
+                    <Text fontSize="3rem" fontWeight="600" mt="2rem">List: {currentList}</Text>
+                    <Box maxH="60vh" overflowY="auto" w="100%">
+                        <Table>
+                            <Thead>
+                                <Tr>
+                                <Th>Food Name</Th>
+                                <Th>Quantity</Th>
+                                <Th isNumeric>Action</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {ingredients && ingredients.map((ingredient) =>{
+                                    return(
+                                        <Tr>
+                                            <Td>
+                                                {ingredient.name}
+                                            </Td>
+                                            <Td>                        
+                                                <InputGroup>
+                                                    <Input
+                                                        value={ingredient.amount}
+                                                        name={ingredient.name}
+                                                        type="number"
+                                                        onChange={handleChange}
+                                                    >
+                                                    </Input>
+                                                    <InputRightAddon children={ingredient.unit} />
+                                                </InputGroup>
+                                            </Td>
+                                            <Td isNumeric>
+                                                <ButtonGroup>
+                                                    <Menu>
+                                                        <MenuButton as={Button} colorScheme={'green'} rightIcon={<ChevronDownIcon />}>
+                                                            Switch Unit
+                                                        </MenuButton>
+                                                        <MenuList>
+                                                            {units.map((unit)=>{
+                                                                return <MenuItem onClick={()=>{updateUnit(ingredient.name, ingredient.amount, ingredient.unit, unit)}}>{unit}</MenuItem>
+                                                            })}
+                                                        </MenuList>
+                                                    </Menu>
+                                                    <Button colorScheme={'red'} onClick={() => {deleteIngredient(ingredient.name)}} rightIcon={<DeleteIcon/>}>Delete</Button>
+                                                </ButtonGroup>
+                                            </Td>
+                                        </Tr>
+                                    )
+                                })}
+                            </Tbody>
+                        </Table>
+                    </Box>
+                    <Box>
+                        <ButtonGroup spacing='3' mt="2rem">
+                            <Button 
+                                colorScheme={'green'} 
+                                onClick={() => saveList()} 
+                                rightIcon={<EditIcon/>}
+                                variant='outline'
+                            >
+                                Save
+                            </Button>
+                            <Button 
+                                colorScheme={'red'} 
+                                onClick={onOpen} 
+                                rightIcon={<DeleteIcon/>}
+                                variant='outline'
+                            >
+                                Delete list
+                            </ Button>
+                            <IconButton aria-label='Undo' icon={<MdUndo />} disabled={history.historyEmpty()} onClick={() => 
+                                {   
+                                    const undo = history.undo();
+                                    if(undo){
+                                        setPrevHistoryEntry({action: undo.action, name: undo.name, prev: undo.prev, undo: true});
                                     }
-                                } />
-                                <IconButton aria-label='Redo' icon={<MdRedo />} disabled={history.futureEmpty()} onClick={() => 
-                                    {
-                                        const redo = history.redo();
-                                        if(redo){
-                                            setPrevHistoryEntry({action: redo.action, name: redo.name, prev: redo.prev, undo: false});
-                                        }
+                                }
+                            } />
+                            <IconButton aria-label='Redo' icon={<MdRedo />} disabled={history.futureEmpty()} onClick={() => 
+                                {
+                                    const redo = history.redo();
+                                    if(redo){
+                                        setPrevHistoryEntry({action: redo.action, name: redo.name, prev: redo.prev, undo: false});
                                     }
-                                } />
-                                <IconButton aria-label='Discard changes' icon={<CloseIcon />} disabled={history.historyEmpty()} onClick={discardChanges} />
-                            </ButtonGroup>
-                        </Tfoot>
-                    </Table>
+                                }
+                            } />
+                            <IconButton aria-label='Discard changes' icon={<CloseIcon />} disabled={history.historyEmpty()} onClick={discardChanges} />
+                        </ButtonGroup>
+                    </Box>
                 </>
             }
         </Box>

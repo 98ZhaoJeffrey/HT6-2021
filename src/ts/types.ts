@@ -8,5 +8,12 @@ export enum HistoryAction {
     NEW
 }
 
+export enum SearchType {
+    MATCHING = "Matching Ingredients",
+    ALPHA="Alphabetical Order",
+    RATING="Top Rated",
+    TIME="Cooking Time"
+}
+
 export type Liked = "Liked" | "Disliked" | "Neither"
 
