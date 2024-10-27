@@ -24,16 +24,9 @@ import {FcGoogle} from "react-icons/fc";
 import { firebase, auth } from '../firebase';
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import * as PageRoutes from "../constants/routes";
+import shuffled_auth_recipe_images from '../constants/auth_recipe_images';
 
 const Login = () => {
-
-  const images = [
-    "https://images.pexels.com/photos/2599537/pexels-photo-2599537.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "https://images.pexels.com/photos/2714581/pexels-photo-2714581.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "https://images.pexels.com/photos/2878019/pexels-photo-2878019.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
-    "https://images.pexels.com/photos/1142950/pexels-photo-1142950.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "https://images.pexels.com/photos/3124111/pexels-photo-3124111.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-  ];
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -150,7 +143,7 @@ const Login = () => {
       </Container>
       </Box>
       <Box w={{ base: "full", md: 10 / 12 }} mx="auto" textAlign="center" display={{ base: "none", xl: "flex"}}>
-        <Carousels images={images} width="full" height="600px"/>
+        <Carousels images={shuffled_auth_recipe_images} width="full" height="600px"/>
       </Box>
     </Flex>
   )

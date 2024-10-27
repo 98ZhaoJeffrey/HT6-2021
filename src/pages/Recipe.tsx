@@ -216,7 +216,7 @@ const RecipePage = () => {
                         </Button>
                     </Flex>
                     
-                    <Text fontSize="xl" maxW="80%" isTruncated noOfLines={3} whiteSpace="normal" wordBreak="break-word">
+                    <Text fontSize="xl" maxW="80%" whiteSpace="normal" wordBreak="break-word">
                         {recipeData.description}
                     </Text>
                     <Box >
