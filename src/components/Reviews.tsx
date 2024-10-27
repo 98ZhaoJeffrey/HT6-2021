@@ -160,7 +160,7 @@ const Reviews = (props: {average: number, reviewCount: number}) => {
                     {Object.keys(reviews).includes(user!.uid) ? "You have already submitted a review" : "Submit review"}
                 </Button>
             </FormControl>
-            <Box maxHeight="30vh" overflowY="auto">
+            <Box maxHeight="30vh" overflowY="auto" w="100%">
                 {Object.keys(reviews).length === 0 ? 
                     <Text fontSize='xl' fontWeight={'600'}> 
                     There are no reviews yet... You could be the first one! 
